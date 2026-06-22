@@ -1,16 +1,16 @@
-import type { Control, FieldPath, FieldValues } from 'react-hook-form';
-import { AmountInput } from '@/components/forms/amount-input';
-import FormController from './form-controller';
+import type { Control, FieldPath, FieldValues } from "react-hook-form"
+import { AmountInput } from "@/components/forms/amount-input"
+import FormController from "./form-controller"
 
 type FormAmountProps<T extends FieldValues> = Omit<
   React.ComponentProps<typeof AmountInput>,
-  'value' | 'onChange'
+  "value" | "onChange"
 > & {
-  name: FieldPath<T>;
-  control: Control<T>;
-  label?: string;
-  description?: string;
-};
+  name: FieldPath<T>
+  control: Control<T>
+  label?: string
+  description?: string
+}
 
 export const CustomAmount = <T extends FieldValues>({
   name,
@@ -31,11 +31,11 @@ export const CustomAmount = <T extends FieldValues>({
         <AmountInput
           {...amountProps}
           {...field}
-          value={field.value ?? ''}
+          value={field.value ?? ""}
           onChange={field.onChange}
           aria-invalid={fieldState.invalid}
         />
       )}
     />
-  );
-};
+  )
+}

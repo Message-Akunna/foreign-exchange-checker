@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { Check, ChevronDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as React from "react"
+import { Check, ChevronDown } from "lucide-react"
+import { cn } from "@/lib/utils"
 import {
   Command,
   CommandEmpty,
@@ -8,64 +8,68 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { buttonVariants } from '@/components/ui/button';
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { buttonVariants } from "@/components/ui/button"
 
 export interface SelectOption {
-  value: string;
-  label: React.ReactNode; // visual
-  searchLabel: string; // searchable text
-  icon?: React.ComponentType<{ className?: string }>;
+  value: string
+  label: React.ReactNode // visual
+  searchLabel: string // searchable text
+  icon?: React.ComponentType<{ className?: string }>
 }
 
 interface SelectProps {
-  options: SelectOption[];
-  value?: string;
-  onChange: (value: string) => void;
-  placeholder?: React.ReactNode;
-  searchPlaceholder?: string;
-  searchable?: boolean;
-  disabled?: boolean;
-  className?: string;
-  id?: string;
-  popoverClassName?: string;
-  'aria-invalid'?: boolean | 'true' | 'false';
-  onSearch?: (term: string) => void;
-  align?: 'start' | 'center' | 'end';
-  modal?: boolean;
-  fitParentWidth?: boolean;
+  options: SelectOption[]
+  value?: string
+  onChange: (value: string) => void
+  placeholder?: React.ReactNode
+  searchPlaceholder?: string
+  searchable?: boolean
+  disabled?: boolean
+  className?: string
+  id?: string
+  popoverClassName?: string
+  "aria-invalid"?: boolean | "true" | "false"
+  onSearch?: (term: string) => void
+  align?: "start" | "center" | "end"
+  modal?: boolean
+  fitParentWidth?: boolean
 }
 
 export function Select({
   options,
   value,
   onChange,
-  placeholder = 'Select option',
-  searchPlaceholder = 'Search...',
+  placeholder = "Select option",
+  searchPlaceholder = "Search...",
   searchable = false,
   disabled = false,
   className,
   id,
   popoverClassName,
-  'aria-invalid': ariaInvalid,
+  "aria-invalid": ariaInvalid,
   onSearch,
-  align = 'start',
+  align = "start",
   modal = true,
   fitParentWidth = false,
 }: SelectProps) {
-  const [open, setOpen] = React.useState(false);
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
-  const [_width, setWidth] = React.useState<number | undefined>(undefined);
+  const [open, setOpen] = React.useState(false)
+  const triggerRef = React.useRef<HTMLButtonElement>(null)
+  const [_width, setWidth] = React.useState<number | undefined>(undefined)
 
   React.useEffect(() => {
     if (open && triggerRef.current) {
-      setWidth(triggerRef.current.offsetWidth);
+      setWidth(triggerRef.current.offsetWidth)
     }
-  }, [open]);
+  }, [open])
 
-  const selectedOption = options.find((option) => option.value === value);
+  const selectedOption = options.find((option) => option.value === value)
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
@@ -77,33 +81,38 @@ export function Select({
         aria-expanded={open}
         aria-invalid={ariaInvalid}
         className={cn(
-          buttonVariants({ variant: 'outline' }),
-          'w-full justify-between h-auto min-h-10 text-left font-normal bg-transparent px-3 py-2',
-          'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:ring-[3px]',
-          !selectedOption && 'text-muted-foreground',
+          buttonVariants({ variant: "outline" }),
+          "w-full justify-between h-auto min-h-10 text-left font-normal bg-transparent px-3 py-2",
+          "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:ring-[3px]",
+          !selectedOption && "text-muted-foreground",
           className
         )}
       >
         <span className="truncate flex items-center gap-2">
-          {selectedOption?.icon && <selectedOption.icon className="size-5 shrink-0" />}
+          {selectedOption?.icon && (
+            <selectedOption.icon className="size-5 shrink-0" />
+          )}
           {selectedOption ? selectedOption.label : placeholder}
         </span>
         <ChevronDown className="ml-2 size-4 shrink-0 opacity-50" />
       </PopoverTrigger>
       <PopoverContent
         className={cn(
-          'p-0',
-          fitParentWidth ? 'w-(--anchor-width)' : 'min-w-32',
+          "p-0",
+          fitParentWidth ? "w-(--anchor-width)" : "min-w-32",
           popoverClassName
         )}
         align={align}
       >
         <Command shouldFilter={!onSearch}>
           {searchable && (
-            <CommandInput placeholder={searchPlaceholder} onValueChange={onSearch} />
+            <CommandInput
+              placeholder={searchPlaceholder}
+              onValueChange={onSearch}
+            />
           )}
           <CommandList>
-            <ScrollArea className={cn('max-h-72', !searchable && 'h-auto')}>
+            <ScrollArea className={cn("max-h-72", !searchable && "h-auto")}>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
                 {options.map((option) => (
@@ -111,19 +120,21 @@ export function Select({
                     key={option.value}
                     value={option.searchLabel}
                     onSelect={() => {
-                      triggerRef.current?.focus({ preventScroll: true });
-                      onChange(option.value);
-                      setOpen(false);
+                      triggerRef.current?.focus({ preventScroll: true })
+                      onChange(option.value)
+                      setOpen(false)
                     }}
                   >
                     <div className="flex items-center gap-2 flex-1">
-                      {option.icon && <option.icon className="size-5 shrink-0" />}
+                      {option.icon && (
+                        <option.icon className="size-5 shrink-0" />
+                      )}
                       {option.label}
                     </div>
                     <Check
                       className={cn(
-                        'ml-auto size-4',
-                        value === option.value ? 'opacity-100' : 'opacity-0'
+                        "ml-auto size-4",
+                        value === option.value ? "opacity-100" : "opacity-0"
                       )}
                     />
                   </CommandItem>
@@ -134,5 +145,5 @@ export function Select({
         </Command>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

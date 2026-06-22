@@ -1,8 +1,8 @@
-import { Link } from '@inertiajs/react';
+import { Link } from "@inertiajs/react"
 interface BreadcrumbItemInt {
-  name: string;
-  label?: string;
-  path?: string;
+  name: string
+  label?: string
+  path?: string
 }
 const Breadcrumbs = ({ data = [] }: { data: BreadcrumbItemInt[] }) => {
   return (
@@ -14,7 +14,7 @@ const Breadcrumbs = ({ data = [] }: { data: BreadcrumbItemInt[] }) => {
           </Link>
           {data.map((item, key) => (
             <div key={key}>
-              <span className="px-2">{'>'}</span>
+              <span className="px-2">{">"}</span>
               {item.path ? (
                 <Link className="hover:underline" href={item.path}>
                   {item.name}
@@ -27,7 +27,7 @@ const Breadcrumbs = ({ data = [] }: { data: BreadcrumbItemInt[] }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Breadcrumbs;
+export default Breadcrumbs

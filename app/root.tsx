@@ -5,11 +5,11 @@ import {
   Scripts,
   ScrollRestoration,
   isRouteErrorResponse,
-} from "react-router";
+} from "react-router"
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import type { Route } from "./+types/root"
-import "./app.css"
+import "./styles/app.css"
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -21,9 +21,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
+        <TooltipProvider>{children}</TooltipProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

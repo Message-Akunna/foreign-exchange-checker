@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react';
-import { ArrowUpRightIcon } from 'lucide-react';
+import type { ReactNode } from "react"
+import { ArrowUpRightIcon } from "lucide-react"
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button"
 import {
   Empty,
   EmptyContent,
@@ -9,16 +9,16 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/components/ui/empty';
+} from "@/components/ui/empty"
 
 interface EmptyStateProps {
-  title: ReactNode;
-  description?: ReactNode;
-  icon?: ReactNode;
-  actions?: ReactNode;
-  linkText?: string;
-  linkHref?: string;
-  className?: string;
+  title: ReactNode
+  description?: ReactNode
+  icon?: ReactNode
+  actions?: ReactNode
+  linkText?: string
+  linkHref?: string
+  className?: string
 }
 
 export const EmptyState = ({
@@ -38,7 +38,9 @@ export const EmptyState = ({
         {description && <EmptyDescription>{description}</EmptyDescription>}
       </EmptyHeader>
       {actions && (
-        <EmptyContent className="flex-row justify-center gap-2">{actions}</EmptyContent>
+        <EmptyContent className="flex-row justify-center gap-2">
+          {actions}
+        </EmptyContent>
       )}
       {linkText && linkHref && (
         <Button
@@ -54,5 +56,5 @@ export const EmptyState = ({
         />
       )}
     </Empty>
-  );
-};
+  )
+}

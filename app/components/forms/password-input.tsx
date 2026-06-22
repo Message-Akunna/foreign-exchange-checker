@@ -1,52 +1,54 @@
-import React from 'react';
+import React from "react"
 // icons
-import { Circle } from 'lucide-react';
-import { EyeIcon, EyeOffIcon, CheckIcon } from '@animateicons/react/lucide';
+import { Circle } from "lucide-react"
+import { EyeIcon, EyeOffIcon, CheckIcon } from "@animateicons/react/lucide"
 // shadcn
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
   InputGroupButton,
-} from '@/components/ui/input-group';
+} from "@/components/ui/input-group"
 // utils
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils"
 
 // Define checklist rules
 export const passwordChecklist = [
   {
-    label: 'At least 8 characters',
+    label: "At least 8 characters",
     validate: (value: string) => value.length >= 8,
   },
   {
-    label: 'Contains a number',
+    label: "Contains a number",
     validate: (value: string) => /\d/.test(value),
   },
   {
-    label: 'Contains an uppercase letter',
+    label: "Contains an uppercase letter",
     validate: (value: string) => /[A-Z]/.test(value),
   },
   {
-    label: 'Contains a lowercase letter',
+    label: "Contains a lowercase letter",
     validate: (value: string) => /[a-z]/.test(value),
   },
   {
-    label: 'Contains a special character',
+    label: "Contains a special character",
     validate: (value: string) => /[!@#$%^&*(),.?":{}|<>]/.test(value),
   },
-];
+]
 
 // Helper function to check if all password rules are met
-export const areAllPasswordRulesMet = (value: string | undefined | null): boolean => {
-  if (typeof value !== 'string') return false;
-  return passwordChecklist.every((rule) => rule.validate(value));
-};
+export const areAllPasswordRulesMet = (
+  value: string | undefined | null
+): boolean => {
+  if (typeof value !== "string") return false
+  return passwordChecklist.every((rule) => rule.validate(value))
+}
 
 interface PasswordRuleCheckerProps {
-  value: string;
-  className?: string;
-  showOnlyUnmet?: boolean; // If true, only show rules that aren't met
-  hideWhenAllMet?: boolean; // If true, hide the component when all rules are met (default: true)
+  value: string
+  className?: string
+  showOnlyUnmet?: boolean // If true, only show rules that aren't met
+  hideWhenAllMet?: boolean // If true, hide the component when all rules are met (default: true)
 }
 
 export const PasswordRuleChecker = ({
@@ -57,45 +59,53 @@ export const PasswordRuleChecker = ({
 }: PasswordRuleCheckerProps) => {
   // Check if all rules are met
   const allRulesMet = React.useMemo(() => {
-    return areAllPasswordRulesMet(value);
-  }, [value]);
+    return areAllPasswordRulesMet(value)
+  }, [value])
 
   // Filter rules based on showOnlyUnmet prop
   const rulesToShow = showOnlyUnmet
     ? passwordChecklist.filter((rule) => !rule.validate(value))
-    : passwordChecklist;
+    : passwordChecklist
 
   // Don't render if value is empty, or all rules are met and hideWhenAllMet is true, or all rules are met and showOnlyUnmet is true
-  if (!value || (allRulesMet && hideWhenAllMet) || (allRulesMet && showOnlyUnmet)) {
-    return null;
+  if (
+    !value ||
+    (allRulesMet && hideWhenAllMet) ||
+    (allRulesMet && showOnlyUnmet)
+  ) {
+    return null
   }
 
   return (
-    <ul className={cn('space-y-1', className)}>
+    <ul className={cn("space-y-1", className)}>
       {rulesToShow.map((rule, index) => {
-        const isValid = rule.validate(value);
+        const isValid = rule.validate(value)
         return (
           <li
             key={index}
             className={cn(
-              'text-sm flex items-center gap-1',
-              isValid ? 'text-green-600' : 'text-destructive'
+              "text-sm flex items-center gap-1",
+              isValid ? "text-green-600" : "text-destructive"
             )}
           >
-            {isValid ? <CheckIcon className="size-3" /> : <Circle className="size-3" />}
+            {isValid ? (
+              <CheckIcon className="size-3" />
+            ) : (
+              <Circle className="size-3" />
+            )}
             <span>{rule.label}</span>
           </li>
-        );
+        )
       })}
     </ul>
-  );
-};
-PasswordRuleChecker.displayName = 'PasswordRuleChecker';
+  )
+}
+PasswordRuleChecker.displayName = "PasswordRuleChecker"
 
 // The 'ref' prop is included in React.ComponentProps<"input">
-interface PasswordInputProps extends React.ComponentProps<'input'> {
-  checklist?: boolean; // New prop to control checklist visibility
-  wrapperClassName?: string;
+interface PasswordInputProps extends React.ComponentProps<"input"> {
+  checklist?: boolean // New prop to control checklist visibility
+  wrapperClassName?: string
 }
 
 const PasswordInput = ({
@@ -104,16 +114,16 @@ const PasswordInput = ({
   wrapperClassName,
   ...props
 }: PasswordInputProps) => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const disabled = props.disabled;
+  const [showPassword, setShowPassword] = React.useState(false)
+  const disabled = props.disabled
 
   return (
-    <div className={cn('space-y-1', wrapperClassName)}>
+    <div className={cn("space-y-1", wrapperClassName)}>
       <InputGroup>
         <InputGroupInput
           placeholder="Enter password"
-          type={showPassword ? 'text' : 'password'}
-          className={cn('hide-password-toggle', className)}
+          type={showPassword ? "text" : "password"}
+          className={cn("hide-password-toggle", className)}
           {...props}
         />
         <InputGroupAddon align="inline-end">
@@ -125,8 +135,8 @@ const PasswordInput = ({
             className="bg-transparent cursor-pointer"
             // Prevents input from losing focus on button click
             onMouseDown={(e) => e.preventDefault()}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
-            title={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? "Hide password" : "Show password"}
+            title={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword && !disabled ? (
               <EyeIcon className="size-4" aria-hidden="true" />
@@ -137,7 +147,9 @@ const PasswordInput = ({
         </InputGroupAddon>
       </InputGroup>
 
-      {checklist && props.value && <PasswordRuleChecker value={props.value as string} />}
+      {checklist && props.value && (
+        <PasswordRuleChecker value={props.value as string} />
+      )}
 
       {/* hides browsers password toggles */}
       <style>{`
@@ -149,9 +161,9 @@ const PasswordInput = ({
           }
       `}</style>
     </div>
-  );
-};
+  )
+}
 
-PasswordInput.displayName = 'PasswordInput';
+PasswordInput.displayName = "PasswordInput"
 
-export { PasswordInput };
+export { PasswordInput }

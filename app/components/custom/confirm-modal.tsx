@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,24 +9,24 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/alert-dialog"
+import { cn } from "@/lib/utils"
 
 interface ConfirmModalProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  title: string;
-  description: ReactNode;
-  confirmText?: string;
-  cancelText?: string;
-  onConfirm: () => void;
-  onCancel?: () => void;
-  variant?: 'default' | 'destructive';
-  size?: 'default' | 'sm';
-  className?: string;
-  media?: ReactNode;
-  confirmDisabled?: boolean;
-  cancelDisabled?: boolean;
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  title: string
+  description: ReactNode
+  confirmText?: string
+  cancelText?: string
+  onConfirm: () => void
+  onCancel?: () => void
+  variant?: "default" | "destructive"
+  size?: "default" | "sm"
+  className?: string
+  media?: ReactNode
+  confirmDisabled?: boolean
+  cancelDisabled?: boolean
 }
 
 export function ConfirmModal({
@@ -34,12 +34,12 @@ export function ConfirmModal({
   onOpenChange,
   title,
   description,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   onConfirm,
   onCancel,
-  variant = 'default',
-  size = 'sm',
+  variant = "default",
+  size = "sm",
   className,
   media,
   confirmDisabled,
@@ -47,13 +47,16 @@ export function ConfirmModal({
 }: ConfirmModalProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className={cn('border-border/40', className)} size={size}>
+      <AlertDialogContent
+        className={cn("border-border/40", className)}
+        size={size}
+      >
         <AlertDialogHeader>
           {media && (
             <AlertDialogMedia
               className={cn(
-                variant === 'destructive' &&
-                  'bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive'
+                variant === "destructive" &&
+                  "bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive"
               )}
             >
               {media}
@@ -67,8 +70,8 @@ export function ConfirmModal({
         <AlertDialogFooter>
           <AlertDialogCancel
             onClick={() => {
-              onCancel?.();
-              onOpenChange(false);
+              onCancel?.()
+              onOpenChange(false)
             }}
             disabled={cancelDisabled}
             variant="outline"
@@ -78,8 +81,8 @@ export function ConfirmModal({
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              onConfirm();
-              onOpenChange(false);
+              onConfirm()
+              onOpenChange(false)
             }}
             disabled={confirmDisabled}
             variant={variant}
@@ -90,5 +93,5 @@ export function ConfirmModal({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  );
+  )
 }
