@@ -14,7 +14,7 @@ import {
 } from "@/services/redux/fx-slice";
 import { useExchangeRates } from "@/services/queries/fx-queries";
 import { FormAmount } from "@/components/forms/form-amount";
-import { Select } from "@/components/forms/select";
+import { CurrencySelect } from "./currency-select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -35,75 +35,11 @@ const formSchema = z.object({
     },
     { message: "Enter a positive number" }
   ),
+  sendCurrency: z.string(),
+  receiveCurrency: z.string(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-const CURRENCY_OPTIONS = [
-  {
-    value: "USD",
-    label: (
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        🇺🇸 USD
-      </span>
-    ),
-    searchLabel: "USD",
-  },
-  {
-    value: "EUR",
-    label: (
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        🇪🇺 EUR
-      </span>
-    ),
-    searchLabel: "EUR",
-  },
-  {
-    value: "GBP",
-    label: (
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        🇬🇧 GBP
-      </span>
-    ),
-    searchLabel: "GBP",
-  },
-  {
-    value: "JPY",
-    label: (
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        🇯🇵 JPY
-      </span>
-    ),
-    searchLabel: "JPY",
-  },
-  {
-    value: "CHF",
-    label: (
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        🇨🇭 CHF
-      </span>
-    ),
-    searchLabel: "CHF",
-  },
-  {
-    value: "AUD",
-    label: (
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        🇦🇺 AUD
-      </span>
-    ),
-    searchLabel: "AUD",
-  },
-  {
-    value: "CAD",
-    label: (
-      <span className="flex items-center gap-2 text-sm font-semibold">
-        🇨🇦 CAD
-      </span>
-    ),
-    searchLabel: "CAD",
-  },
-];
 
 export function ConverterForm() {
   const dispatch = useAppDispatch();
@@ -127,25 +63,43 @@ export function ConverterForm() {
     defaultValues: {
       amount: reduxAmount,
       receiveAmount: (Number(reduxAmount || "0") * conversionRate).toFixed(2),
+      sendCurrency: sendCurrency,
+      receiveCurrency: receiveCurrency,
     },
   });
 
   const watchedAmount = watch("amount");
   const watchedReceiveAmount = watch("receiveAmount");
+  const watchedSendCurrency = watch("sendCurrency");
+  const watchedReceiveCurrency = watch("receiveCurrency");
 
-  // Sync local RHF amount state to Redux when it changes
+  // Sync local RHF states to Redux when they change
   React.useEffect(() => {
     if (watchedAmount) {
       dispatch(setAmount(watchedAmount));
     }
   }, [watchedAmount, dispatch]);
 
-  // Sync Redux state back to local RHF if changed elsewhere (e.g. from favorites page click)
+  React.useEffect(() => {
+    if (watchedSendCurrency && watchedSendCurrency !== sendCurrency) {
+      dispatch(setSendCurrency(watchedSendCurrency));
+    }
+  }, [watchedSendCurrency, sendCurrency, dispatch]);
+
+  React.useEffect(() => {
+    if (watchedReceiveCurrency && watchedReceiveCurrency !== receiveCurrency) {
+      dispatch(setReceiveCurrency(watchedReceiveCurrency));
+    }
+  }, [watchedReceiveCurrency, receiveCurrency, dispatch]);
+
+  // Sync Redux state back to local RHF if changed elsewhere (e.g. from favorites page click or swap)
   React.useEffect(() => {
     setValue("amount", reduxAmount);
     const computed = Number(reduxAmount || "0") * conversionRate;
     setValue("receiveAmount", computed.toFixed(2));
-  }, [reduxAmount, setValue, conversionRate]);
+    setValue("sendCurrency", sendCurrency);
+    setValue("receiveCurrency", receiveCurrency);
+  }, [reduxAmount, sendCurrency, receiveCurrency, setValue, conversionRate]);
 
   // Keep receiveAmount in sync with amount when conversionRate or amount changes
   React.useEffect(() => {
@@ -239,10 +193,9 @@ export function ConverterForm() {
                 onChange={handleSendAmountChange}
               />
               <div className="shrink-0">
-                <Select
-                  options={CURRENCY_OPTIONS}
-                  value={sendCurrency}
-                  onChange={(val) => dispatch(setSendCurrency(val))}
+                <CurrencySelect
+                  control={control}
+                  name="sendCurrency"
                   align="end"
                 />
               </div>
@@ -279,10 +232,9 @@ export function ConverterForm() {
                 onChange={handleReceiveAmountChange}
               />
               <div className="shrink-0">
-                <Select
-                  options={CURRENCY_OPTIONS}
-                  value={receiveCurrency}
-                  onChange={(val) => dispatch(setReceiveCurrency(val))}
+                <CurrencySelect
+                  control={control}
+                  name="receiveCurrency"
                   align="end"
                 />
               </div>

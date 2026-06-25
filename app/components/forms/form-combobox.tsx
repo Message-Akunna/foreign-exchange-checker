@@ -1,6 +1,9 @@
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
-import type { SelectOption } from "@/components/forms/select";
-import { FormSelect } from "./form-select";
+import {
+  SelectCombobox,
+  type SelectOption,
+} from "@/components/forms/select-combobox";
+import FormController from "@/components/forms/form-controller";
 
 type FormComboboxProps<T extends FieldValues> = {
   name: FieldPath<T>;
@@ -11,6 +14,8 @@ type FormComboboxProps<T extends FieldValues> = {
   description?: string;
   options: SelectOption[];
   className?: string;
+  disabled?: boolean;
+  align?: "start" | "center" | "end";
 };
 
 function FormCombobox<T extends FieldValues>({
@@ -22,18 +27,32 @@ function FormCombobox<T extends FieldValues>({
   description,
   options,
   className,
+  disabled,
+  align,
 }: FormComboboxProps<T>) {
   return (
-    <FormSelect
+    <FormController
       name={name}
       label={label}
       control={control}
       description={description}
-      options={options}
-      placeholder={placeholder}
-      searchPlaceholder={searchPlaceholder}
-      searchable={true}
       className={className}
+      render={({
+        field: { value, onChange, disabled: fieldDisabled },
+        fieldState,
+      }) => (
+        <SelectCombobox
+          value={value}
+          onChange={onChange}
+          disabled={disabled ?? fieldDisabled}
+          options={options}
+          placeholder={placeholder}
+          searchable={true}
+          searchPlaceholder={searchPlaceholder}
+          aria-invalid={fieldState.invalid}
+          align={align}
+        />
+      )}
     />
   );
 }

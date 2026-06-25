@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // icon
 import Logo from "@/assets/images/logo.svg?react";
 import { Container } from "@/components/custom/container";
+import { ThemeSwitcher } from "@/components/custom/theme-switcher";
 ``;
 export default function HomeLayout() {
   const navigate = useNavigate();
@@ -41,14 +42,19 @@ export default function HomeLayout() {
       <div className="absolute inset-0 bg-[radial-gradient(#cef739_0.5px,transparent_0.5px)] bg-size-[16px_16px] opacity-5 pointer-events-none" />
 
       {/* Top Header */}
-      <header className="flex py-5 px-6 items-center justify-between select-none z-10">
-        <Logo />
-        <div className="flex items-center gap-1 text-sm font-normal tracking-[1px] font-mono text-muted-foreground uppercase">
-          <span>55 Currencies</span>
-          <span>·</span>
-          <span>EOD</span>
-          <span>·</span>
-          <span>ECB Data</span>
+      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4 py-5 px-6 select-none z-10">
+        <div className="flex items-center w-auto mr-auto">
+          <Logo />
+        </div>
+        <ThemeSwitcher />
+        <div className="flex items-center gap-4 justify-end w-full sm:w-auto sm:justify-end">
+          <div className="flex flex-1 sm:flex-auto items-center gap-1 text-xs sm:text-sm font-normal tracking-[1px] font-mono text-muted-foreground uppercase">
+            <span>55 Currencies</span>
+            <span>·</span>
+            <span>EOD</span>
+            <span>·</span>
+            <span>ECB Data</span>
+          </div>
         </div>
       </header>
 
