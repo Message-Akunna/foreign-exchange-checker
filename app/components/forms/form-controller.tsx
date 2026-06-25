@@ -1,5 +1,5 @@
-import type * as React from "react"
-import { Controller } from "react-hook-form"
+import type * as React from "react";
+import { Controller } from "react-hook-form";
 import type {
   Control,
   FieldPath,
@@ -7,28 +7,28 @@ import type {
   ControllerFieldState,
   ControllerRenderProps,
   FormState,
-} from "react-hook-form"
+} from "react-hook-form";
 import {
   Field,
   FieldContent,
   FieldDescription,
   FieldError,
   FieldLabel,
-} from "@/components/ui/field"
+} from "@/components/ui/field";
 
 export interface FormControllerProps<T extends FieldValues> {
-  name: FieldPath<T>
-  control: Control<T>
-  label?: React.ReactNode
-  description?: React.ReactNode
-  orientation?: React.ComponentProps<typeof Field>["orientation"]
+  name: FieldPath<T>;
+  control: Control<T>;
+  label?: React.ReactNode;
+  description?: React.ReactNode;
+  orientation?: React.ComponentProps<typeof Field>["orientation"];
   render: (props: {
-    field: ControllerRenderProps<T, FieldPath<T>>
-    fieldState: ControllerFieldState
-    formState: FormState<T>
-  }) => React.ReactElement
-  className?: string
-  fieldClassName?: string
+    field: ControllerRenderProps<T, FieldPath<T>>;
+    fieldState: ControllerFieldState;
+    formState: FormState<T>;
+  }) => React.ReactElement;
+  className?: string;
+  fieldClassName?: string;
 }
 
 export function FormController<T extends FieldValues>({
@@ -64,7 +64,7 @@ export function FormController<T extends FieldValues>({
         </Field>
       )}
     />
-  )
+  );
 }
 
-export default FormController
+export default FormController;

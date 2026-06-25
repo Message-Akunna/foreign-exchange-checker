@@ -1,6 +1,6 @@
-import * as React from "react"
-import { Check, ChevronDown } from "lucide-react"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Check, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -8,38 +8,38 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { buttonVariants } from "@/components/ui/button"
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { buttonVariants } from "@/components/ui/button";
 
 export interface SelectOption {
-  value: string
-  label: React.ReactNode // visual
-  searchLabel: string // searchable text
-  icon?: React.ComponentType<{ className?: string }>
+  value: string;
+  label: React.ReactNode; // visual
+  searchLabel: string; // searchable text
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 interface SelectProps {
-  options: SelectOption[]
-  value?: string
-  onChange: (value: string) => void
-  placeholder?: React.ReactNode
-  searchPlaceholder?: string
-  searchable?: boolean
-  disabled?: boolean
-  className?: string
-  id?: string
-  popoverClassName?: string
-  "aria-invalid"?: boolean | "true" | "false"
-  onSearch?: (term: string) => void
-  align?: "start" | "center" | "end"
-  modal?: boolean
-  fitParentWidth?: boolean
+  options: SelectOption[];
+  value?: string;
+  onChange: (value: string) => void;
+  placeholder?: React.ReactNode;
+  searchPlaceholder?: string;
+  searchable?: boolean;
+  disabled?: boolean;
+  className?: string;
+  id?: string;
+  popoverClassName?: string;
+  "aria-invalid"?: boolean | "true" | "false";
+  onSearch?: (term: string) => void;
+  align?: "start" | "center" | "end";
+  modal?: boolean;
+  fitParentWidth?: boolean;
 }
 
 export function Select({
@@ -59,17 +59,17 @@ export function Select({
   modal = true,
   fitParentWidth = false,
 }: SelectProps) {
-  const [open, setOpen] = React.useState(false)
-  const triggerRef = React.useRef<HTMLButtonElement>(null)
-  const [_width, setWidth] = React.useState<number | undefined>(undefined)
+  const [open, setOpen] = React.useState(false);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const [_width, setWidth] = React.useState<number | undefined>(undefined);
 
   React.useEffect(() => {
     if (open && triggerRef.current) {
-      setWidth(triggerRef.current.offsetWidth)
+      setWidth(triggerRef.current.offsetWidth);
     }
-  }, [open])
+  }, [open]);
 
-  const selectedOption = options.find((option) => option.value === value)
+  const selectedOption = options.find((option) => option.value === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={modal}>
@@ -120,9 +120,9 @@ export function Select({
                     key={option.value}
                     value={option.searchLabel}
                     onSelect={() => {
-                      triggerRef.current?.focus({ preventScroll: true })
-                      onChange(option.value)
-                      setOpen(false)
+                      triggerRef.current?.focus({ preventScroll: true });
+                      onChange(option.value);
+                      setOpen(false);
                     }}
                   >
                     <div className="flex items-center gap-2 flex-1">
@@ -145,5 +145,5 @@ export function Select({
         </Command>
       </PopoverContent>
     </Popover>
-  )
+  );
 }

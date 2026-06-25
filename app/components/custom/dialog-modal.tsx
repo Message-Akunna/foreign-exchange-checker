@@ -1,6 +1,6 @@
-import type { PropsWithChildren } from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import type { PropsWithChildren } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 const modalVariants = cva("w-full p-6", {
   variants: {
@@ -28,18 +28,18 @@ const modalVariants = cva("w-full p-6", {
   defaultVariants: {
     size: "default",
   },
-})
+});
 
 interface DialogModalProps extends PropsWithChildren {
-  title: string
-  open: boolean
-  className?: string
-  description?: string
-  label?: React.ReactNode
-  footer?: React.ReactNode
-  showCloseButton?: boolean
-  setOpen?: (open: boolean) => void
-  size?: VariantProps<typeof modalVariants>["size"]
+  title: string;
+  open: boolean;
+  className?: string;
+  description?: string;
+  label?: React.ReactNode;
+  footer?: React.ReactNode;
+  showCloseButton?: boolean;
+  setOpen?: (open: boolean) => void;
+  size?: VariantProps<typeof modalVariants>["size"];
 }
 
 export const DialogModal = ({
@@ -58,7 +58,7 @@ export const DialogModal = ({
     <Dialog
       open={open}
       onOpenChange={(open) => {
-        setOpen?.(open)
+        setOpen?.(open);
       }}
     >
       <DialogContent
@@ -78,5 +78,5 @@ export const DialogModal = ({
         {footer && <DialogFooter>{footer}</DialogFooter>}
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};

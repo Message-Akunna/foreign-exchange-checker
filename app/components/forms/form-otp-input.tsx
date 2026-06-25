@@ -1,25 +1,25 @@
-import type { Control, FieldPath, FieldValues } from "react-hook-form"
+import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from "@/components/ui/input-otp"
-import { cn } from "@/lib/utils"
-import FormController from "./form-controller"
-import type { Field } from "@/components/ui/field"
+} from "@/components/ui/input-otp";
+import { cn } from "@/lib/utils";
+import FormController from "./form-controller";
+import type { Field } from "@/components/ui/field";
 
 type FormOtpInputProps<T extends FieldValues> = {
-  name: FieldPath<T>
-  control: Control<T>
-  label?: string
-  description?: string
-  maxLength?: number
-  className?: string
-  otpClassName?: string
-  groupClassName?: string
-  slotClassName?: string
-  orientation?: React.ComponentProps<typeof Field>["orientation"]
-}
+  name: FieldPath<T>;
+  control: Control<T>;
+  label?: string;
+  description?: string;
+  maxLength?: number;
+  className?: string;
+  otpClassName?: string;
+  groupClassName?: string;
+  slotClassName?: string;
+  orientation?: React.ComponentProps<typeof Field>["orientation"];
+};
 
 function FormOtpInput<T extends FieldValues>({
   name,
@@ -65,7 +65,7 @@ function FormOtpInput<T extends FieldValues>({
         </InputOTP>
       )}
     />
-  )
+  );
 }
 
-export default FormOtpInput
+export default FormOtpInput;

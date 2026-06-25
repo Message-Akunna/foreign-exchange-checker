@@ -1,22 +1,22 @@
-import type * as React from "react"
+import type * as React from "react";
 // lib
-import type { Control, FieldPath, FieldValues } from "react-hook-form"
+import type { Control, FieldPath, FieldValues } from "react-hook-form";
 // components
-import { FieldLabel } from "@/components/ui/field"
-import { Checkbox } from "@/components/ui/checkbox"
-import FormController from "./form-controller"
+import { FieldLabel } from "@/components/ui/field";
+import { Checkbox } from "@/components/ui/checkbox";
+import FormController from "./form-controller";
 
-type CheckboxProps = React.ComponentProps<typeof Checkbox>
+type CheckboxProps = React.ComponentProps<typeof Checkbox>;
 
 type FormCheckboxProps<T extends FieldValues> = Omit<
   CheckboxProps,
   "checked" | "onCheckedChange"
 > & {
-  name: FieldPath<T>
-  control: Control<T>
-  label?: React.ReactNode
-  description?: React.ReactNode
-}
+  name: FieldPath<T>;
+  control: Control<T>;
+  label?: React.ReactNode;
+  description?: React.ReactNode;
+};
 
 export const FormCheckbox = <T extends FieldValues>({
   id,
@@ -27,7 +27,7 @@ export const FormCheckbox = <T extends FieldValues>({
   description,
   ...checkboxProps
 }: FormCheckboxProps<T>) => {
-  const inputId = id ?? name
+  const inputId = id ?? name;
 
   return (
     <FormController
@@ -57,5 +57,5 @@ export const FormCheckbox = <T extends FieldValues>({
         </div>
       )}
     />
-  )
-}
+  );
+};

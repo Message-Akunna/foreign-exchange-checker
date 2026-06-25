@@ -12,9 +12,10 @@
       "!**/*.test.tsx",
       "!**/node_modules",
       "!**/dist",
+      "!**/.react-router",
+      "!**/build",
       "!!**/public",
-      "!!**/coverage",
-      "!!**/.react-router"
+      "!!**/coverage"
     ]
   },
   "formatter": {
@@ -62,7 +63,7 @@
       "jsxQuoteStyle": "double",
       "quoteProperties": "asNeeded",
       "trailingCommas": "es5",
-      "semicolons": "asNeeded",
+      "semicolons": "always",
       "arrowParentheses": "always",
       "bracketSameLine": false,
       "quoteStyle": "double",

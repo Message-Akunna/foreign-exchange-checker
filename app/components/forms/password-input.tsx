@@ -1,16 +1,16 @@
-import React from "react"
+import React from "react";
 // icons
-import { Circle } from "lucide-react"
-import { EyeIcon, EyeOffIcon, CheckIcon } from "@animateicons/react/lucide"
+import { Circle } from "lucide-react";
+import { EyeIcon, EyeOffIcon, CheckIcon } from "@animateicons/react/lucide";
 // shadcn
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
   InputGroupButton,
-} from "@/components/ui/input-group"
+} from "@/components/ui/input-group";
 // utils
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 // Define checklist rules
 export const passwordChecklist = [
@@ -34,21 +34,21 @@ export const passwordChecklist = [
     label: "Contains a special character",
     validate: (value: string) => /[!@#$%^&*(),.?":{}|<>]/.test(value),
   },
-]
+];
 
 // Helper function to check if all password rules are met
 export const areAllPasswordRulesMet = (
   value: string | undefined | null
 ): boolean => {
-  if (typeof value !== "string") return false
-  return passwordChecklist.every((rule) => rule.validate(value))
-}
+  if (typeof value !== "string") return false;
+  return passwordChecklist.every((rule) => rule.validate(value));
+};
 
 interface PasswordRuleCheckerProps {
-  value: string
-  className?: string
-  showOnlyUnmet?: boolean // If true, only show rules that aren't met
-  hideWhenAllMet?: boolean // If true, hide the component when all rules are met (default: true)
+  value: string;
+  className?: string;
+  showOnlyUnmet?: boolean; // If true, only show rules that aren't met
+  hideWhenAllMet?: boolean; // If true, hide the component when all rules are met (default: true)
 }
 
 export const PasswordRuleChecker = ({
@@ -59,13 +59,13 @@ export const PasswordRuleChecker = ({
 }: PasswordRuleCheckerProps) => {
   // Check if all rules are met
   const allRulesMet = React.useMemo(() => {
-    return areAllPasswordRulesMet(value)
-  }, [value])
+    return areAllPasswordRulesMet(value);
+  }, [value]);
 
   // Filter rules based on showOnlyUnmet prop
   const rulesToShow = showOnlyUnmet
     ? passwordChecklist.filter((rule) => !rule.validate(value))
-    : passwordChecklist
+    : passwordChecklist;
 
   // Don't render if value is empty, or all rules are met and hideWhenAllMet is true, or all rules are met and showOnlyUnmet is true
   if (
@@ -73,13 +73,13 @@ export const PasswordRuleChecker = ({
     (allRulesMet && hideWhenAllMet) ||
     (allRulesMet && showOnlyUnmet)
   ) {
-    return null
+    return null;
   }
 
   return (
     <ul className={cn("space-y-1", className)}>
       {rulesToShow.map((rule, index) => {
-        const isValid = rule.validate(value)
+        const isValid = rule.validate(value);
         return (
           <li
             key={index}
@@ -95,17 +95,17 @@ export const PasswordRuleChecker = ({
             )}
             <span>{rule.label}</span>
           </li>
-        )
+        );
       })}
     </ul>
-  )
-}
-PasswordRuleChecker.displayName = "PasswordRuleChecker"
+  );
+};
+PasswordRuleChecker.displayName = "PasswordRuleChecker";
 
 // The 'ref' prop is included in React.ComponentProps<"input">
 interface PasswordInputProps extends React.ComponentProps<"input"> {
-  checklist?: boolean // New prop to control checklist visibility
-  wrapperClassName?: string
+  checklist?: boolean; // New prop to control checklist visibility
+  wrapperClassName?: string;
 }
 
 const PasswordInput = ({
@@ -114,8 +114,8 @@ const PasswordInput = ({
   wrapperClassName,
   ...props
 }: PasswordInputProps) => {
-  const [showPassword, setShowPassword] = React.useState(false)
-  const disabled = props.disabled
+  const [showPassword, setShowPassword] = React.useState(false);
+  const disabled = props.disabled;
 
   return (
     <div className={cn("space-y-1", wrapperClassName)}>
@@ -161,9 +161,9 @@ const PasswordInput = ({
           }
       `}</style>
     </div>
-  )
-}
+  );
+};
 
-PasswordInput.displayName = "PasswordInput"
+PasswordInput.displayName = "PasswordInput";
 
-export { PasswordInput }
+export { PasswordInput };

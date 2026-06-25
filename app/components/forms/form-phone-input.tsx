@@ -1,18 +1,18 @@
-import type { Control, FieldPath, FieldValues } from "react-hook-form"
-import { PhoneInput, type PhoneData } from "@/components/forms/phone-input"
-import FormController from "./form-controller"
-import type { Field } from "../ui/field"
+import type { Control, FieldPath, FieldValues } from "react-hook-form";
+import { PhoneInput, type PhoneData } from "@/components/forms/phone-input";
+import FormController from "./form-controller";
+import type { Field } from "../ui/field";
 
 type FormPhoneInputProps<T extends FieldValues> = {
-  name: FieldPath<T>
-  control: Control<T>
-  label?: string
-  placeholder?: string
-  description?: string
-  className?: string
-  onPhoneChange?: (data: PhoneData | null) => void
-  orientation?: React.ComponentProps<typeof Field>["orientation"]
-}
+  name: FieldPath<T>;
+  control: Control<T>;
+  label?: string;
+  placeholder?: string;
+  description?: string;
+  className?: string;
+  onPhoneChange?: (data: PhoneData | null) => void;
+  orientation?: React.ComponentProps<typeof Field>["orientation"];
+};
 
 function FormPhoneInput<T extends FieldValues>({
   name,
@@ -41,7 +41,7 @@ function FormPhoneInput<T extends FieldValues>({
         />
       )}
     />
-  )
+  );
 }
 
-export default FormPhoneInput
+export default FormPhoneInput;

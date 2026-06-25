@@ -1,19 +1,19 @@
-import { Select, type SelectOption } from "@/components/forms/select"
-import FormController from "@/components/forms/form-controller"
-import type { Control, FieldValues, Path } from "react-hook-form"
+import { Select, type SelectOption } from "@/components/forms/select";
+import FormController from "@/components/forms/form-controller";
+import type { Control, FieldValues, Path } from "react-hook-form";
 
 interface FormSelectProps<T extends FieldValues> {
-  control: Control<T>
-  name: Path<T>
-  label?: string
-  placeholder?: string
-  description?: string
-  options: SelectOption[]
-  searchable?: boolean
-  searchPlaceholder?: string
-  disabled?: boolean
-  className?: string
-  selectClassName?: string
+  control: Control<T>;
+  name: Path<T>;
+  label?: string;
+  placeholder?: string;
+  description?: string;
+  options: SelectOption[];
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  disabled?: boolean;
+  className?: string;
+  selectClassName?: string;
 }
 
 export function FormSelect<T extends FieldValues>({
@@ -50,5 +50,5 @@ export function FormSelect<T extends FieldValues>({
         />
       )}
     />
-  )
+  );
 }

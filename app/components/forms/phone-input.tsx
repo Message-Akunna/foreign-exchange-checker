@@ -1,17 +1,17 @@
-import * as React from "react"
+import * as React from "react";
 // phone number input
-import * as RPNInput from "react-phone-number-input"
-import flags from "react-phone-number-input/flags"
-import { parsePhoneNumber } from "react-phone-number-input"
-import { Select, type SelectOption } from "@/components/forms/select"
-import { Input } from "@/components/ui/input"
-import { cn } from "@/lib/utils"
+import * as RPNInput from "react-phone-number-input";
+import flags from "react-phone-number-input/flags";
+import { parsePhoneNumber } from "react-phone-number-input";
+import { Select, type SelectOption } from "@/components/forms/select";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 export interface PhoneData {
-  countryCode: string // Calling code, e.g. "234"
-  localFormat: string // National number, e.g. "8012345678"
-  internationalFormat: string // E.164, e.g. "+2348012345678"
-  country: string // ISO code, e.g. "NG"
+  countryCode: string; // Calling code, e.g. "234"
+  localFormat: string; // National number, e.g. "8012345678"
+  internationalFormat: string; // E.164, e.g. "+2348012345678"
+  country: string; // ISO code, e.g. "NG"
 }
 
 type PhoneInputProps = Omit<
@@ -19,9 +19,9 @@ type PhoneInputProps = Omit<
   "onChange" | "value" | "ref"
 > &
   Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
-    onChange?: (value: RPNInput.Value) => void
-    onPhoneChange?: (data: PhoneData | null) => void
-  }
+    onChange?: (value: RPNInput.Value) => void;
+    onPhoneChange?: (data: PhoneData | null) => void;
+  };
 
 const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
   React.forwardRef<
@@ -47,30 +47,30 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
          * @param {E164Number | undefined} value - The entered value
          */
         onChange={(value) => {
-          onChange?.(value || ("" as RPNInput.Value))
+          onChange?.(value || ("" as RPNInput.Value));
           if (onPhoneChange) {
             if (value) {
-              const parsed = parsePhoneNumber(value)
+              const parsed = parsePhoneNumber(value);
               if (parsed) {
                 onPhoneChange({
                   countryCode: parsed.countryCallingCode,
                   localFormat: parsed.nationalNumber,
                   internationalFormat: parsed.number,
                   country: parsed.country || "",
-                })
+                });
               } else {
-                onPhoneChange(null)
+                onPhoneChange(null);
               }
             } else {
-              onPhoneChange(null)
+              onPhoneChange(null);
             }
           }
         }}
         {...props}
       />
-    )
-  })
-PhoneInput.displayName = "PhoneInput"
+    );
+  });
+PhoneInput.displayName = "PhoneInput";
 
 const InputComponent = React.forwardRef<
   HTMLInputElement,
@@ -81,17 +81,17 @@ const InputComponent = React.forwardRef<
     {...props}
     ref={ref}
   />
-))
-InputComponent.displayName = "InputComponent"
+));
+InputComponent.displayName = "InputComponent";
 
-type CountryEntry = { label: string; value: RPNInput.Country | undefined }
+type CountryEntry = { label: string; value: RPNInput.Country | undefined };
 
 type CountrySelectProps = {
-  disabled?: boolean
-  value: RPNInput.Country
-  options: CountryEntry[]
-  onChange: (country: RPNInput.Country) => void
-}
+  disabled?: boolean;
+  value: RPNInput.Country;
+  options: CountryEntry[];
+  onChange: (country: RPNInput.Country) => void;
+};
 
 const CountrySelect = ({
   disabled,
@@ -103,8 +103,8 @@ const CountrySelect = ({
     return countryList
       .filter((country) => country.value)
       .map((country) => {
-        const iso = country.value as RPNInput.Country
-        const callingCode = RPNInput.getCountryCallingCode(iso)
+        const iso = country.value as RPNInput.Country;
+        const callingCode = RPNInput.getCountryCallingCode(iso);
         return {
           value: country.value as string,
           searchLabel: `${country.label} +${callingCode}`,
@@ -123,9 +123,9 @@ const CountrySelect = ({
               className={cn("size-5 shrink-0", className)}
             />
           ),
-        }
-      })
-  }, [countryList])
+        };
+      });
+  }, [countryList]);
 
   return (
     <Select
@@ -141,15 +141,15 @@ const CountrySelect = ({
       className="gap-1 rounded-e-none rounded-s-lg border-r-0 px-3 focus:z-10 w-18"
       popoverClassName="w-[300px]"
     />
-  )
-}
+  );
+};
 
 const FlagComponent = ({
   country,
   countryName,
   className,
 }: RPNInput.FlagProps & { className?: string }) => {
-  const Flag = flags[country]
+  const Flag = flags[country];
 
   return (
     <span
@@ -161,7 +161,7 @@ const FlagComponent = ({
     >
       {Flag && <Flag title={countryName} />}
     </span>
-  )
-}
+  );
+};
 
-export { PhoneInput }
+export { PhoneInput };

@@ -1,12 +1,12 @@
-import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 
 interface IconButtonProps extends React.ComponentProps<typeof Button> {
-  loading?: boolean
-  icon?: React.ReactNode
-  iconPlacement?: "left" | "right"
+  loading?: boolean;
+  icon?: React.ReactNode;
+  iconPlacement?: "left" | "right";
 }
 
 const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
@@ -40,10 +40,10 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           </span>
         )}
       </Button>
-    )
+    );
   }
-)
+);
 
-IconButton.displayName = "IconButton"
+IconButton.displayName = "IconButton";
 
-export { IconButton }
+export { IconButton };

@@ -1,22 +1,22 @@
-import { Link } from "@inertiajs/react"
+import { Link } from "react-router";
 interface BreadcrumbItemInt {
-  name: string
-  label?: string
-  path?: string
+  name: string;
+  label?: string;
+  path?: string;
 }
 const Breadcrumbs = ({ data = [] }: { data: BreadcrumbItemInt[] }) => {
   return (
     <div className="bg-muted">
       <div className="mx-auto text-muted-foreground">
         <div className="flex font-medium font-text">
-          <Link className="hover:underline" href="/">
+          <Link className="hover:underline" to="/">
             Home
           </Link>
           {data.map((item, key) => (
             <div key={key}>
               <span className="px-2">{">"}</span>
               {item.path ? (
-                <Link className="hover:underline" href={item.path}>
+                <Link className="hover:underline" to={item.path}>
                   {item.name}
                 </Link>
               ) : (
@@ -27,7 +27,7 @@ const Breadcrumbs = ({ data = [] }: { data: BreadcrumbItemInt[] }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Breadcrumbs
+export default Breadcrumbs;

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import type { ReactNode } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,24 +9,24 @@ import {
   AlertDialogHeader,
   AlertDialogMedia,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 interface ConfirmModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  description: ReactNode
-  confirmText?: string
-  cancelText?: string
-  onConfirm: () => void
-  onCancel?: () => void
-  variant?: "default" | "destructive"
-  size?: "default" | "sm"
-  className?: string
-  media?: ReactNode
-  confirmDisabled?: boolean
-  cancelDisabled?: boolean
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  description: ReactNode;
+  confirmText?: string;
+  cancelText?: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  variant?: "default" | "destructive";
+  size?: "default" | "sm";
+  className?: string;
+  media?: ReactNode;
+  confirmDisabled?: boolean;
+  cancelDisabled?: boolean;
 }
 
 export function ConfirmModal({
@@ -62,36 +62,36 @@ export function ConfirmModal({
               {media}
             </AlertDialogMedia>
           )}
-          <AlertDialogTitle className="font-sans">{title}</AlertDialogTitle>
-          <AlertDialogDescription className="font-sans">
+          <AlertDialogTitle className="">{title}</AlertDialogTitle>
+          <AlertDialogDescription className="">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
             onClick={() => {
-              onCancel?.()
-              onOpenChange(false)
+              onCancel?.();
+              onOpenChange(false);
             }}
             disabled={cancelDisabled}
             variant="outline"
-            className="font-sans border-border/40"
+            className=" border-border/40"
           >
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={() => {
-              onConfirm()
-              onOpenChange(false)
+              onConfirm();
+              onOpenChange(false);
             }}
             disabled={confirmDisabled}
             variant={variant}
-            className="font-sans font-semibold"
+            className=" font-semibold"
           >
             {confirmText}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
