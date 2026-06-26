@@ -70,27 +70,6 @@ export function ConverterForm() {
 
   const watchedAmount = watch("amount");
   const watchedReceiveAmount = watch("receiveAmount");
-  const watchedSendCurrency = watch("sendCurrency");
-  const watchedReceiveCurrency = watch("receiveCurrency");
-
-  // Sync local RHF states to Redux when they change
-  React.useEffect(() => {
-    if (watchedAmount) {
-      dispatch(setAmount(watchedAmount));
-    }
-  }, [watchedAmount, dispatch]);
-
-  React.useEffect(() => {
-    if (watchedSendCurrency && watchedSendCurrency !== sendCurrency) {
-      dispatch(setSendCurrency(watchedSendCurrency));
-    }
-  }, [watchedSendCurrency, sendCurrency, dispatch]);
-
-  React.useEffect(() => {
-    if (watchedReceiveCurrency && watchedReceiveCurrency !== receiveCurrency) {
-      dispatch(setReceiveCurrency(watchedReceiveCurrency));
-    }
-  }, [watchedReceiveCurrency, receiveCurrency, dispatch]);
 
   // Sync Redux state back to local RHF if changed elsewhere (e.g. from favorites page click or swap)
   React.useEffect(() => {
@@ -120,6 +99,7 @@ export function ConverterForm() {
   }, [conversionRate, watchedAmount, watchedReceiveAmount, setValue]);
 
   const handleSendAmountChange = (val: string) => {
+    dispatch(setAmount(val));
     const num = Number(val);
     if (!num || Number.isNaN(num)) {
       setValue("receiveAmount", "");
@@ -133,10 +113,12 @@ export function ConverterForm() {
     const num = Number(val);
     if (!num || Number.isNaN(num) || conversionRate === 0) {
       setValue("amount", "");
+      dispatch(setAmount(""));
       return;
     }
     const computed = num / conversionRate;
     setValue("amount", computed.toFixed(2));
+    dispatch(setAmount(computed.toFixed(2)));
   };
 
   const handleSwap = () => {
@@ -177,9 +159,13 @@ export function ConverterForm() {
   };
 
   return (
-    <Card className="w-full border-0 rounded-3.5xl p-0">
-      <form id="converter-form" onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-6 p-5">
+    <Card className="w-full border-0 rounded-3.5xl p-0 gap-0">
+      <CardContent className="p-5">
+        <form
+          id="converter-form"
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-6"
+        >
           {/* Send Field */}
           <div className="flex flex-col bg-accent border border-border rounded-2.5xl p-5 gap-5 justify-between">
             <p className="text-sm text-muted-foreground uppercase">Send</p>
@@ -197,6 +183,7 @@ export function ConverterForm() {
                   control={control}
                   name="sendCurrency"
                   align="end"
+                  onChange={(val) => dispatch(setSendCurrency(val))}
                 />
               </div>
             </div>
@@ -236,15 +223,16 @@ export function ConverterForm() {
                   control={control}
                   name="receiveCurrency"
                   align="end"
+                  onChange={(val) => dispatch(setReceiveCurrency(val))}
                 />
               </div>
             </div>
           </div>
-        </CardContent>
-      </form>
+        </form>
+      </CardContent>
 
       {/* Conversion Rate subtext & Action buttons */}
-      <CardFooter className="border-t border-dashed bg-card p-4">
+      <CardFooter className="border-t border-dashed bg-card py-4 px-5">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-4 w-full">
           <div className="text-xs">
             1 {sendCurrency} ={" "}

@@ -16,6 +16,7 @@ type FormComboboxProps<T extends FieldValues> = {
   className?: string;
   disabled?: boolean;
   align?: "start" | "center" | "end";
+  onChange?: (value: string) => void;
 };
 
 function FormCombobox<T extends FieldValues>({
@@ -29,6 +30,7 @@ function FormCombobox<T extends FieldValues>({
   className,
   disabled,
   align,
+  onChange,
 }: FormComboboxProps<T>) {
   return (
     <FormController
@@ -38,12 +40,15 @@ function FormCombobox<T extends FieldValues>({
       description={description}
       className={className}
       render={({
-        field: { value, onChange, disabled: fieldDisabled },
+        field: { value, onChange: fieldOnChange, disabled: fieldDisabled },
         fieldState,
       }) => (
         <SelectCombobox
           value={value}
-          onChange={onChange}
+          onChange={(val) => {
+            fieldOnChange(val);
+            onChange?.(val);
+          }}
           disabled={disabled ?? fieldDisabled}
           options={options}
           placeholder={placeholder}

@@ -19,6 +19,27 @@ export default function HomeLayout() {
   const favoriteCount = useAppSelector((state) => state.fx.favorites.length);
   const logCount = useAppSelector((state) => state.fx.logs.length);
 
+  const tabItems = [
+    {
+      value: "history",
+      label: "History",
+    },
+    {
+      value: "compare",
+      label: "Compare",
+    },
+    {
+      value: "favorites",
+      label: "Favorites",
+      count: favoriteCount,
+    },
+    {
+      value: "logs",
+      label: "Log",
+      count: logCount,
+    },
+  ];
+
   // Sync tab selection value with current route path
   const currentTab = React.useMemo(() => {
     const path = location.pathname;
@@ -76,50 +97,34 @@ export default function HomeLayout() {
         {/* Tab Subroute Area */}
         <section className="pb-8 lg:pb-12">
           <Container className="space-y-6 pt-0">
-            <Tabs value={currentTab} onValueChange={handleTabChange}>
+            <Tabs
+              value={currentTab}
+              onValueChange={handleTabChange}
+              className="border-b mb-5"
+            >
               <TabsList
                 variant="line"
-                className="w-full border-b border-border/60 justify-start gap-8 px-0 h-10 bg-transparent rounded-none"
+                className="justify-start gap-8 px-0 h-10 bg-transparent rounded-none"
               >
-                <TabsTrigger
-                  value="history"
-                  className="h-full border-b-2 border-transparent data-active:border-primary text-xs font-mono tracking-wider font-bold uppercase pb-3 px-1 data-active:text-primary transition-all rounded-none bg-transparent dark:data-active:bg-transparent"
-                >
-                  History
-                </TabsTrigger>
-                <TabsTrigger
-                  value="compare"
-                  className="h-full border-b-2 border-transparent data-active:border-primary text-xs font-mono tracking-wider font-bold uppercase pb-3 px-1 data-active:text-primary transition-all rounded-none bg-transparent dark:data-active:bg-transparent"
-                >
-                  Compare
-                </TabsTrigger>
-                <TabsTrigger
-                  value="favorites"
-                  className="h-full border-b-2 border-transparent data-active:border-primary text-xs font-mono tracking-wider font-bold uppercase pb-3 px-1 data-active:text-primary transition-all rounded-none bg-transparent dark:data-active:bg-transparent gap-2"
-                >
-                  Favorites
-                  {favoriteCount > 0 && (
-                    <span className="flex items-center justify-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-card border border-border/80 text-primary">
-                      {favoriteCount}
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="logs"
-                  className="h-full border-b-2 border-transparent data-active:border-primary text-xs font-mono tracking-wider font-bold uppercase pb-3 px-1 data-active:text-primary transition-all rounded-none bg-transparent dark:data-active:bg-transparent gap-2"
-                >
-                  Log
-                  {logCount > 0 && (
-                    <span className="flex items-center justify-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-card border border-border/80 text-primary">
-                      {logCount}
-                    </span>
-                  )}
-                </TabsTrigger>
+                {tabItems.map((tab) => (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="uppercase py-3 px-4 gap-2 after:bg-primary"
+                  >
+                    {tab.label}
+                    {tab.count !== undefined && tab.count > 0 && (
+                      <span className="flex items-center justify-center size-5 rounded-full text-[10px] bg-primary/10 text-primary">
+                        {tab.count}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                ))}
               </TabsList>
             </Tabs>
 
             {/* Sub-route Content */}
-            <div className="pt-2">
+            <div className="">
               <Outlet />
             </div>
           </Container>

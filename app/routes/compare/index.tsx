@@ -1,193 +1,149 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useNavigate } from "react-router";
-import { useAppDispatch, useAppSelector } from "@/services/redux";
-import { setSendCurrency, setReceiveCurrency } from "@/services/redux/fx-slice";
+// icons
+import { Star } from "lucide-react";
+// lib
+import { toast } from "sonner";
+// services
+import { CURRENCIES } from "@/routes/_data/currencies";
+import { toggleFavorite } from "@/services/redux/fx-slice";
 import { useExchangeRates } from "@/services/queries/fx-queries";
-import { Select } from "@/components/forms/select";
-import { FormMultiSelect } from "@/components/forms/form-multi-select";
+// components
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, ExternalLink } from "lucide-react";
+import { FlagImage } from "@/components/custom/flag-image";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+// redux
+import { useAppDispatch, useAppSelector } from "@/services/redux";
+// utils
 import { cn } from "@/lib/utils";
-
-const compareSchema = z.object({
-  baseCurrency: z.string(),
-  targetCurrencies: z
-    .array(z.string())
-    .min(1, "Select at least one currency to compare"),
-});
-
-type CompareFormValues = z.infer<typeof compareSchema>;
-
-const CURRENCY_OPTIONS = [
-  { value: "USD", label: "🇺🇸 USD", searchLabel: "USD" },
-  { value: "EUR", label: "🇪🇺 EUR", searchLabel: "EUR" },
-  { value: "GBP", label: "🇬🇧 GBP", searchLabel: "GBP" },
-  { value: "JPY", label: "🇯🇵 JPY", searchLabel: "JPY" },
-  { value: "CHF", label: "🇨🇭 CHF", searchLabel: "CHF" },
-  { value: "AUD", label: "🇦🇺 AUD", searchLabel: "AUD" },
-  { value: "CAD", label: "🇨🇦 CAD", searchLabel: "CAD" },
-];
-
-const MULTI_SELECT_OPTIONS = [
-  { value: "USD", label: "🇺🇸 USD" },
-  { value: "EUR", label: "🇪🇺 EUR" },
-  { value: "GBP", label: "🇬🇧 GBP" },
-  { value: "JPY", label: "🇯🇵 JPY" },
-  { value: "CHF", label: "🇨🇭 CHF" },
-  { value: "AUD", label: "🇦🇺 AUD" },
-  { value: "CAD", label: "🇨🇦 CAD" },
-];
 
 export default function ComparePage() {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const currentSendCurrency = useAppSelector((state) => state.fx.sendCurrency);
-  const currentReceiveCurrency = useAppSelector(
-    (state) => state.fx.receiveCurrency
+  const amount = useAppSelector((state) => state.fx.amount);
+  const sendCurrency = useAppSelector((state) => state.fx.sendCurrency);
+  const receiveCurrency = useAppSelector((state) => state.fx.receiveCurrency);
+  const favorites = useAppSelector((state) => state.fx.favorites);
+
+  // Fetch real-time exchange rates with sendCurrency as base
+  const { data: rates, isLoading } = useExchangeRates(sendCurrency);
+
+  // Filter comparison currencies: exclude base and chosen received currency
+  const targetCurrencies = CURRENCIES.filter(
+    (currency) =>
+      currency.code !== sendCurrency && currency.code !== receiveCurrency
   );
 
-  const { control, watch, setValue } = useForm<CompareFormValues>({
-    resolver: zodResolver(compareSchema),
-    defaultValues: {
-      baseCurrency: currentSendCurrency,
-      targetCurrencies: [
-        currentReceiveCurrency,
-        ...["GBP", "JPY", "CAD"].filter(
-          (c) => c !== currentSendCurrency && c !== currentReceiveCurrency
-        ),
-      ],
-    },
+  const formattedAmount = Number(amount || 0).toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   });
 
-  const baseCurrency = watch("baseCurrency");
-  const targetCurrencies = watch("targetCurrencies") || [];
-
-  // Fetch rates for base currency
-  const { data: rates, isLoading } = useExchangeRates(baseCurrency);
-
-  const handleLoadInConverter = (target: string) => {
-    dispatch(setSendCurrency(baseCurrency));
-    dispatch(setReceiveCurrency(target));
-    navigate("/history");
+  const handleToggleFavorite = (pair: string) => {
+    dispatch(toggleFavorite(pair));
+    const isFavorited = favorites.includes(pair);
+    toast.success(
+      isFavorited
+        ? `Removed ${pair} from favorites`
+        : `Added ${pair} to favorites`
+    );
   };
 
   return (
-    <div className="space-y-6">
-      {/* Compare Inputs Card */}
-      <div className="border border-border bg-card/30 rounded-2xl p-6 shadow-md space-y-4">
-        <h3 className="text-xs font-mono font-bold tracking-widest text-muted-foreground uppercase">
-          Compare Setup
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 items-end">
-          {/* Base Currency Select */}
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-mono tracking-wider text-muted-foreground uppercase">
-              Base Currency
-            </label>
-            <Select
-              options={CURRENCY_OPTIONS}
-              value={baseCurrency}
-              onChange={(val) => setValue("baseCurrency", val)}
-              className="border border-border bg-card/50 rounded-lg min-h-[38px] font-mono font-semibold"
-            />
-          </div>
-
-          {/* Target Currencies MultiSelect */}
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-mono tracking-wider text-muted-foreground uppercase">
-              Compare Against
-            </label>
-            <FormMultiSelect
-              control={control}
-              name="targetCurrencies"
-              options={MULTI_SELECT_OPTIONS.filter(
-                (o) => o.value !== baseCurrency
-              )}
-              placeholder="Select currencies to compare..."
-              className="w-full"
-            />
-          </div>
+    <Card className="space-y-5 py-5 gap-0">
+      {/* Header Info */}
+      <CardHeader className="flex items-center justify-between px-5">
+        <div className="flex items-center gap-2 uppercase">
+          <span className="text-muted-foreground text-sm">MULTI-CURRENCY</span>
+          <span className="text-foreground text-base">
+            {formattedAmount} FROM {sendCurrency}
+          </span>
         </div>
-      </div>
+        <div className="text-sm uppercase text-muted-foreground">
+          {targetCurrencies.length} PAIRS
+        </div>
+      </CardHeader>
 
-      {/* Comparisons Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {/* Comparisons List */}
+      <CardContent className="space-y-3">
         {isLoading ? (
-          <div className="col-span-full py-12 text-center text-muted-foreground animate-pulse font-mono text-sm">
+          <div className="py-12 text-center text-muted-foreground animate-pulse font-mono text-sm">
             Fetching comparison rates...
-          </div>
-        ) : targetCurrencies.length === 0 ? (
-          <div className="col-span-full py-12 border border-dashed border-border/80 rounded-2xl text-center text-muted-foreground font-mono text-sm">
-            Select one or more target currencies above to see comparisons.
           </div>
         ) : (
           targetCurrencies.map((target) => {
-            const info = rates?.[target];
-            const rateVal = info?.rate ?? 1.0;
-            const changeVal = info?.change ?? 0.0;
-            const pctChangeVal = info?.pctChange ?? 0.0;
-            const isPos = changeVal >= 0;
+            const info = rates?.[target.code];
+            const rate = info?.rate ?? 1.0;
+            const calculated = Number(amount || 0) * rate;
+
+            // Formatted Value logic
+            const isZeroDecimal = ["JPY", "BDT"].includes(target.code);
+            const formattedValue = calculated.toLocaleString("en-US", {
+              minimumFractionDigits: isZeroDecimal ? 0 : 2,
+              maximumFractionDigits: isZeroDecimal ? 0 : 2,
+            });
+
+            // Formatted Rate logic
+            const formattedRate = rate.toLocaleString("en-US", {
+              minimumFractionDigits:
+                rate >= 100 ? (target.code === "INR" ? 3 : 2) : 4,
+              maximumFractionDigits: 4,
+            });
+
+            const pair = `${sendCurrency}/${target.code}`;
+            const isFavorited = favorites.includes(pair);
 
             return (
               <div
-                key={target}
-                className="border border-border/80 bg-card/20 rounded-xl p-5 shadow-sm space-y-4 hover:border-border transition-all flex flex-col justify-between"
+                key={target.code}
+                // onClick={() => handleToggleFavorite(pair)}
+                className="flex items-center justify-between px-4 py-3 bg-accent border  hover:bg-secondary transition-all rounded-lg gap-5 cursor-pointer"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-mono font-bold tracking-tight text-foreground">
-                      {baseCurrency} / {target}
+                {/* Left Side: Flag & Currency Details */}
+                <div className="flex items-center gap-5">
+                  <FlagImage
+                    code={target.code}
+                    className="size-6 rounded-full border border-border/30"
+                  />
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-sm leading-4 text-foreground">
+                      {target.code}
                     </span>
-                    <span
-                      className={cn(
-                        "flex items-center gap-0.5 text-[10px] font-mono font-bold px-1.5 py-0.5 rounded border",
-                        isPos
-                          ? "text-success bg-success/5 border-success/20"
-                          : "text-destructive bg-destructive/5 border-destructive/20"
-                      )}
-                    >
-                      {isPos ? (
-                        <TrendingUp className="size-3" />
-                      ) : (
-                        <TrendingDown className="size-3" />
-                      )}
-                      {isPos ? "+" : ""}
-                      {pctChangeVal.toFixed(2)}%
+                    <span className="text-xs leading-3.5 text-muted-foreground">
+                      {target.name}
                     </span>
-                  </div>
-
-                  <div className="text-3xl font-mono font-bold tracking-tighter text-foreground pt-1">
-                    {rateVal.toLocaleString("en-US", {
-                      minimumFractionDigits: 4,
-                      maximumFractionDigits: 4,
-                    })}
-                  </div>
-
-                  <div className="text-[10px] font-mono text-muted-foreground pt-1">
-                    Change: {isPos ? "+" : ""}
-                    {changeVal.toFixed(4)}
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-border/40">
+                {/* Right Side: Converted Amount, Rate & Star Toggle */}
+                <div className="flex items-center gap-5">
+                  <div className="flex flex-col items-end gap-1.5">
+                    <span className="text-base leading-4.5 text-foreground">
+                      {formattedValue}
+                    </span>
+                    <span className="text-[10px] leading-2.5 text-muted-foreground">
+                      @ {formattedRate}
+                    </span>
+                  </div>
+
+                  {/* Favorite Toggle Button */}
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleLoadInConverter(target)}
-                    className="w-full justify-between h-8 text-[10px] font-mono font-bold tracking-wider uppercase text-primary hover:text-primary hover:bg-primary/5 rounded-lg"
+                    type="button"
+                    size="icon-sm"
+                    className="cursor-pointer"
+                    onClick={() => handleToggleFavorite(pair)}
+                    variant={isFavorited ? "outline-primary" : "outline"}
                   >
-                    <span>Load in Converter</span>
-                    <ExternalLink className="size-3" />
+                    <Star
+                      className={cn(
+                        "size-4",
+                        isFavorited ? "fill-primary text-primary" : "fill-none"
+                      )}
+                    />
                   </Button>
                 </div>
               </div>
             );
           })
         )}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

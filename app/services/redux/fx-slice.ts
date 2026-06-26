@@ -95,6 +95,9 @@ export const fxSlice = createSlice({
     clearLogs: (state) => {
       state.logs = [];
     },
+    deleteLog: (state, action: PayloadAction<string>) => {
+      state.logs = state.logs.filter((log) => log.id !== action.payload);
+    },
   },
 });
 
@@ -106,6 +109,7 @@ export const {
   toggleFavorite,
   addLog,
   clearLogs,
+  deleteLog,
 } = fxSlice.actions;
 
 export default fxSlice.reducer;

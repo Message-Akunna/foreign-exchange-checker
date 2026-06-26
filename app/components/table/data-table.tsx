@@ -8,7 +8,7 @@ import {
 import {
   InertiaPagination,
   type PaginatorMeta,
-} from "@/components/custom/inertia-pagination";
+} from "@/components/custom/pagination";
 import { cn } from "@/lib/utils";
 import { DataTableBody } from "./table-body";
 

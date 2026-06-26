@@ -106,7 +106,7 @@
     --popover-foreground: var(--color-neutral-50);
     --primary: var(--color-lime-500);
     --primary-foreground: var(--color-neutral-900);
-    --secondary: var(--color-neutral-600);
+    --secondary: var(--color-neutral-500);
     --secondary-foreground: var(--color-neutral-50);
     --muted: var(--color-neutral-600);
     --muted-foreground: var(--color-neutral-200);
