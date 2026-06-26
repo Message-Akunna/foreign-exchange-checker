@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface ChartPanelProps {
   currentPair: string;
@@ -45,16 +46,7 @@ export function ChartPanel({
               {ratesLoading ? "..." : formatValue(lastVal)}
             </span>
             <span className="mx-2">•</span>
-            <span>
-              {new Date().toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              })}{" "}
-              CET
-            </span>
+            <span>{format(new Date(), "MMM d, HH:mm")} CET</span>
           </div>
         </div>
 

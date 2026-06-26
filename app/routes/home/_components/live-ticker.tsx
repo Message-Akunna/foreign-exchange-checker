@@ -18,7 +18,7 @@ const TICKER_ITEMS: TickerItem[] = [
 
 export function LiveTicker() {
   return (
-    <div className="flex w-full items-stretch bg-card text-xs font-mono select-none overflow-hidden">
+    <div className="flex w-full items-stretch bg-card text-xs select-none overflow-hidden">
       {/* Label */}
       <div className="flex items-center gap-2 bg-primary px-4 py-3 font-medium tracking-wider text-primary-foreground uppercase shrink-0">
         <span className="relative flex size-1.5">

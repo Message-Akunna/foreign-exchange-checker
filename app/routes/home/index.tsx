@@ -50,10 +50,11 @@ export default function HomeLayout() {
   }, [location.pathname]);
 
   const handleTabChange = (value: string) => {
+    const search = location.search;
     if (value === "history") {
-      navigate("/history");
+      navigate(`/history${search}`);
     } else {
-      navigate(`/${value}`);
+      navigate(`/${value}${search}`);
     }
   };
 

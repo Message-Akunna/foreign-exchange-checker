@@ -2,7 +2,8 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Star, ArrowLeftRight } from "lucide-react";
+import { Star, ArrowLeftRight, Share2 } from "lucide-react";
+import { useSearchParamGroup } from "@/hooks/use-search-param-group";
 import { useAppDispatch, useAppSelector } from "@/services/redux";
 import {
   setAmount,
@@ -57,6 +58,47 @@ export function ConverterForm() {
   // Compute conversion rate
   const rateInfo = rates?.[receiveCurrency];
   const conversionRate = rateInfo?.rate ?? 0.853;
+
+  const [params, setParams] = useSearchParamGroup<{
+    amount: string | null;
+    send: string | null;
+    receive: string | null;
+    rate: string | null;
+  }>();
+  const hasHydrated = React.useRef(false);
+
+  // 1. Initial Hydration from URL Search Parameters
+  React.useEffect(() => {
+    if (hasHydrated.current) return;
+
+    const querySend = params.send;
+    const queryReceive = params.receive;
+    const queryAmount = params.amount;
+
+    if (querySend) {
+      dispatch(setSendCurrency(querySend));
+    }
+    if (queryReceive) {
+      dispatch(setReceiveCurrency(queryReceive));
+    }
+    if (queryAmount) {
+      dispatch(setAmount(queryAmount));
+    }
+
+    hasHydrated.current = true;
+  }, [dispatch, params.send, params.receive, params.amount]);
+
+  // 2. URL Search Parameters Synchronization
+  React.useEffect(() => {
+    if (!hasHydrated.current) return;
+
+    setParams({
+      amount: reduxAmount || null,
+      send: sendCurrency || null,
+      receive: receiveCurrency || null,
+      rate: conversionRate ? conversionRate.toFixed(4) : null,
+    });
+  }, [reduxAmount, sendCurrency, receiveCurrency, conversionRate, setParams]);
 
   const { control, watch, setValue, handleSubmit } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -132,6 +174,20 @@ export function ConverterForm() {
     } else {
       toast.success(`Added ${currentPair} to favorites`);
     }
+  };
+
+  const handleShare = () => {
+    if (typeof window === "undefined") return;
+
+    navigator.clipboard
+      .writeText(window.location.href)
+      .then(() => {
+        toast.success("Conversion link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Could not copy text: ", err);
+        toast.error("Failed to copy link");
+      });
   };
 
   const onSubmit = (data: FormValues) => {
@@ -262,6 +318,18 @@ export function ConverterForm() {
               variant="outline-primary"
             >
               Log Conversion
+            </Button>
+
+            {/* Share Conversion button */}
+            <Button
+              size="sm"
+              type="button"
+              onClick={handleShare}
+              className="uppercase"
+              variant="outline-primary"
+            >
+              <Share2 className="size-3.5" />
+              Share
             </Button>
           </div>
         </div>

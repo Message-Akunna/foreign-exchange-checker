@@ -10,6 +10,7 @@ import { useExchangeRates } from "@/services/queries/fx-queries";
 import { Button } from "@/components/ui/button";
 import { FlagImage } from "@/components/custom/flag-image";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { ListItemCard } from "@/components/custom/list-item-card";
 // redux
 import { useAppDispatch, useAppSelector } from "@/services/redux";
 // utils
@@ -64,7 +65,7 @@ export default function ComparePage() {
       {/* Comparisons List */}
       <CardContent className="space-y-3">
         {isLoading ? (
-          <div className="py-12 text-center text-muted-foreground animate-pulse font-mono text-sm">
+          <div className="py-12 text-center text-muted-foreground animate-pulse text-sm">
             Fetching comparison rates...
           </div>
         ) : (
@@ -91,11 +92,7 @@ export default function ComparePage() {
             const isFavorited = favorites.includes(pair);
 
             return (
-              <div
-                key={target.code}
-                // onClick={() => handleToggleFavorite(pair)}
-                className="flex items-center justify-between px-4 py-3 bg-accent border  hover:bg-secondary transition-all rounded-lg gap-5 cursor-pointer"
-              >
+              <ListItemCard key={target.code}>
                 {/* Left Side: Flag & Currency Details */}
                 <div className="flex items-center gap-5">
                   <FlagImage
@@ -139,7 +136,7 @@ export default function ComparePage() {
                     />
                   </Button>
                 </div>
-              </div>
+              </ListItemCard>
             );
           })
         )}

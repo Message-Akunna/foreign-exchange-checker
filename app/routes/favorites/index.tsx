@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ListItemCard } from "@/components/custom/list-item-card";
 
 export default function FavoritesPage() {
   const dispatch = useAppDispatch();
@@ -39,12 +40,10 @@ export default function FavoritesPage() {
         className="py-12 border-dashed border border-border/80 bg-card/10 rounded-2xl min-h-[300px]"
         icon={<Star className="size-5 fill-current" />}
         title={
-          <span className="text-base font-mono font-bold mt-2">
-            No Favorites Saved
-          </span>
+          <span className="text-base font-bold mt-2">No Favorites Saved</span>
         }
         description={
-          <span className="font-mono text-xs max-w-xs mt-1 block">
+          <span className="text-xs max-w-xs mt-1 block">
             Toggle the favorite star in the converter widget to save currency
             pairs for quick access.
           </span>
@@ -104,28 +103,17 @@ function FavoriteCard({ pair, onSelect, onRemove }: FavoriteCardProps) {
   });
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={onSelect}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onSelect();
-        }
-      }}
-      className="flex items-center justify-between px-4 py-3 bg-accent border hover:bg-secondary transition-all rounded-lg gap-5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20"
-    >
+    <ListItemCard onSelect={onSelect}>
       {/* Left Side: Currency pair arrows */}
       <div className="flex items-center gap-5">
-        <span className="text-sm font-semibold text-foreground font-mono">
+        <span className="text-sm font-semibold text-foreground">
           {base} → {target}
         </span>
       </div>
 
       {/* Right Side: Rate value, Percent change and Active Star button */}
       <div className="flex items-center gap-5">
-        <div className="flex flex-col items-end gap-1.5 font-mono">
+        <div className="flex flex-col items-end gap-1.5">
           {isLoading ? (
             <span className="text-xs text-muted-foreground animate-pulse">
               Loading...
@@ -162,6 +150,6 @@ function FavoriteCard({ pair, onSelect, onRemove }: FavoriteCardProps) {
           <Star className="size-4 fill-primary text-primary" />
         </Button>
       </div>
-    </div>
+    </ListItemCard>
   );
 }
