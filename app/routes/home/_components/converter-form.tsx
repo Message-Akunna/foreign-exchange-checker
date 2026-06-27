@@ -1,25 +1,33 @@
 import * as React from "react";
+// lib
+import * as z from "zod";
+import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+// icons
 import { Star, ArrowLeftRight, Share2 } from "lucide-react";
+import { ArrowDownUpIcon } from "@animateicons/react/lucide";
+// hooks
 import { useSearchParamGroup } from "@/hooks/use-search-param-group";
 import { useAppDispatch, useAppSelector } from "@/services/redux";
+// redux slice
 import {
+  addLog,
   setAmount,
-  setSendCurrency,
-  setReceiveCurrency,
   swapCurrencies,
   toggleFavorite,
-  addLog,
+  setSendCurrency,
+  setReceiveCurrency,
 } from "@/services/redux/fx-slice";
-import { useExchangeRates } from "@/services/queries/fx-queries";
-import { FormAmount } from "@/components/forms/form-amount";
-import { CurrencySelect } from "./currency-select";
+// components
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { CurrencySelect } from "./currency-select";
+import { FormAmount } from "@/components/forms/form-amount";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+// queries
+import { useExchangeRates } from "@/services/queries/fx-queries";
+// utils
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   amount: z.string().refine(
@@ -255,7 +263,7 @@ export function ConverterForm() {
               className="shrink-0 transition-transform active:scale-95"
               title="Swap Currencies"
             >
-              <ArrowLeftRight className="size-5 text-foreground" />
+              <ArrowDownUpIcon className="size-5 text-foreground rotate-90" />
             </Button>
           </div>
 
