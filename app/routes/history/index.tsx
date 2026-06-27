@@ -9,8 +9,10 @@ import { TimeframeSelector } from "./_components/timeframe-selector";
 import { ChartPanel } from "./_components/chart-panel";
 
 export default function HistoryPage() {
-  const sendCurrency = useAppSelector((state) => state.fx.sendCurrency);
-  const receiveCurrency = useAppSelector((state) => state.fx.receiveCurrency);
+  const sendCurrency = useAppSelector((state: any) => state.fx.sendCurrency);
+  const receiveCurrency = useAppSelector(
+    (state: any) => state.fx.receiveCurrency
+  );
 
   const [timeframe, setTimeframe] = React.useState("1M");
 
@@ -25,11 +27,22 @@ export default function HistoryPage() {
   );
 
   const rateInfo = rates?.[receiveCurrency];
-  const openVal = rateInfo?.open ?? 0.8516;
-  const lastVal = rateInfo?.last ?? 0.853;
-  const changeVal = rateInfo?.change ?? 0.0014;
-  const pctChangeVal = rateInfo?.pctChange ?? 0.16;
 
+  // Calculate range stats dynamically from historyData
+  const points = historyData || [];
+  const hasPoints = points.length > 0;
+
+  const openVal = hasPoints ? points[0].value : (rateInfo?.open ?? 0);
+  const lastVal = hasPoints
+    ? points[points.length - 1].value
+    : (rateInfo?.last ?? 0);
+
+  const values = points.map((p) => p.value);
+  const highVal = hasPoints ? Math.max(...values) : (rateInfo?.high ?? 0);
+  const lowVal = hasPoints ? Math.min(...values) : (rateInfo?.low ?? 0);
+
+  const changeVal = lastVal - openVal;
+  const pctChangeVal = openVal > 0 ? (changeVal / openVal) * 100 : 0;
   const isPositive = changeVal >= 0;
 
   const formatValue = (val: number) => {
@@ -39,35 +52,47 @@ export default function HistoryPage() {
     });
   };
 
+  const pctChangeNode =
+    ratesLoading || historyLoading ? (
+      "..."
+    ) : (
+      <span className="flex items-center gap-1">
+        <span>{isPositive ? "▲" : "▼"}</span>
+        <span>
+          {isPositive ? "+" : ""}
+          {pctChangeVal.toFixed(2)}%
+        </span>
+      </span>
+    );
+
   const statsData = [
     {
       title: "Open",
-      value: ratesLoading ? "..." : formatValue(openVal),
+      value: ratesLoading || historyLoading ? "..." : formatValue(openVal),
     },
     {
       title: "Last",
-      value: ratesLoading ? "..." : formatValue(lastVal),
+      value: ratesLoading || historyLoading ? "..." : formatValue(lastVal),
+    },
+    {
+      title: "High",
+      value: ratesLoading || historyLoading ? "..." : formatValue(highVal),
+    },
+    {
+      title: "Low",
+      value: ratesLoading || historyLoading ? "..." : formatValue(lowVal),
     },
     {
       title: "Change",
-      value: ratesLoading
-        ? "..."
-        : `${isPositive ? "+" : ""}${changeVal.toFixed(4)}`,
+      value:
+        ratesLoading || historyLoading
+          ? "..."
+          : `${isPositive ? "+" : ""}${changeVal.toFixed(4)}`,
       valueClassName: isPositive ? "text-success" : "text-destructive",
     },
     {
       title: "% Change",
-      value: ratesLoading ? (
-        "..."
-      ) : (
-        <span className="flex items-center gap-1">
-          <span>{isPositive ? "▲" : "▼"}</span>
-          <span>
-            {isPositive ? "+" : ""}
-            {pctChangeVal.toFixed(2)}%
-          </span>
-        </span>
-      ),
+      value: pctChangeNode,
       valueClassName: isPositive ? "text-success" : "text-destructive",
     },
   ];

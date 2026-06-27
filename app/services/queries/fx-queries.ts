@@ -1,295 +1,117 @@
 import { useQuery } from "@tanstack/react-query";
+import { VALID_CURRENCIES } from "./fx-constants";
+import { calculateDateRange, formatRateInfo } from "./fx-helpers";
+import { getCurrencies, getLatestRates, getHistoricalRates } from "./fx-apis";
+import type { HistoricalRatesResponse } from "./fx-types";
 
-export interface RateInfo {
-  rate: number;
-  change: number;
-  pctChange: number;
-  open: number;
-  last: number;
-  high: number;
-  low: number;
+// Re-export all modular assets for backward compatibility across pages
+export * from "./fx-types";
+export * from "./fx-constants";
+export * from "./fx-keys";
+export * from "./fx-helpers";
+export * from "./fx-apis";
+
+/**
+ * React Query hook to fetch supported currencies mapping.
+ *
+ * @returns React Query result containing currencies map
+ */
+export function useCurrencies() {
+  return useQuery({
+    queryKey: ["currencies"],
+    queryFn: () => getCurrencies(),
+    staleTime: 24 * 60 * 60 * 1000,
+  });
 }
 
-// Fixed mock rates based on USD base
-const USD_RATES: Record<string, RateInfo> = {
-  EUR: {
-    rate: 0.853,
-    change: 0.0014,
-    pctChange: 0.16,
-    open: 0.8516,
-    last: 0.853,
-    high: 0.8612,
-    low: 0.8421,
-  },
-  JPY: {
-    rate: 157.91,
-    change: 0.06,
-    pctChange: 0.04,
-    open: 157.85,
-    last: 157.91,
-    high: 158.5,
-    low: 157.2,
-  },
-  GBP: {
-    rate: 0.7366,
-    change: -0.0016,
-    pctChange: -0.22,
-    open: 0.7382,
-    last: 0.7366,
-    high: 0.742,
-    low: 0.731,
-  },
-  CHF: {
-    rate: 0.9098,
-    change: 0.0013,
-    pctChange: 0.14,
-    open: 0.9085,
-    last: 0.9098,
-    high: 0.915,
-    low: 0.903,
-  },
-  AUD: {
-    rate: 1.3874,
-    change: 0.0011,
-    pctChange: 0.08,
-    open: 1.3863,
-    last: 1.3874,
-    high: 1.398,
-    low: 1.379,
-  },
-  CAD: {
-    rate: 1.3815,
-    change: 0.0006,
-    pctChange: 0.04,
-    open: 1.3809,
-    last: 1.3815,
-    high: 1.389,
-    low: 1.374,
-  },
-  INR: {
-    rate: 94.91,
-    change: 0.15,
-    pctChange: 0.16,
-    open: 94.76,
-    last: 94.91,
-    high: 95.2,
-    low: 94.5,
-  },
-  CNY: {
-    rate: 7.21,
-    change: -0.005,
-    pctChange: -0.07,
-    open: 7.215,
-    last: 7.21,
-    high: 7.25,
-    low: 7.18,
-  },
-  BDT: {
-    rate: 122.92,
-    change: 0.42,
-    pctChange: 0.34,
-    open: 122.5,
-    last: 122.92,
-    high: 123.5,
-    low: 122.1,
-  },
-  NZD: {
-    rate: 1.695,
-    change: 0.003,
-    pctChange: 0.18,
-    open: 1.692,
-    last: 1.695,
-    high: 1.705,
-    low: 1.685,
-  },
-  TRY: {
-    rate: 38.642,
-    change: 0.21,
-    pctChange: 0.54,
-    open: 38.432,
-    last: 38.642,
-    high: 38.9,
-    low: 38.3,
-  },
-  USD: {
-    rate: 1.0,
-    change: 0.0,
-    pctChange: 0.0,
-    open: 1.0,
-    last: 1.0,
-    high: 1.0,
-    low: 1.0,
-  },
-};
-
-// Generates dynamic rates relative to whatever base is chosen
-export const getRatesForBase = (base: string): Record<string, RateInfo> => {
-  const baseRateToUSD = USD_RATES[base]?.rate || 1;
-  const rates: Record<string, RateInfo> = {};
-
-  for (const [curr, usdInfo] of Object.entries(USD_RATES)) {
-    if (curr === base) {
-      rates[curr] = {
-        rate: 1,
-        change: 0,
-        pctChange: 0,
-        open: 1,
-        last: 1,
-        high: 1,
-        low: 1,
-      };
-      continue;
-    }
-    // Calculate relative rate: e.g. base=EUR, target=JPY -> (157.91 / 0.8530)
-    const rate = usdInfo.rate / baseRateToUSD;
-    const open = usdInfo.open / baseRateToUSD;
-    const change = rate - open;
-    const pctChange = open > 0 ? (change / open) * 100 : 0;
-
-    // Create realistic ranges
-    const range = rate * 0.02;
-    rates[curr] = {
-      rate,
-      change,
-      pctChange,
-      open,
-      last: rate,
-      high: rate + range * 0.4,
-      low: rate - range * 0.6,
-    };
-  }
-  return rates;
-};
-
-// Mock Historical Graph Data Generator
-export const generateHistoricalData = (
-  pair: string,
-  timeframe: string
-): { date: string; value: number }[] => {
-  const [base, target] = pair.split("/");
-  const baseRate =
-    getRatesForBase(base || "USD")[target || "EUR"]?.rate || 0.853;
-
-  let points = 30;
-  let _labelFormat = "MMM dd";
-
-  switch (timeframe) {
-    case "1D":
-      points = 24;
-      _labelFormat = "HH:00";
-      break;
-    case "1W":
-      points = 7;
-      _labelFormat = "EEE";
-      break;
-    case "1M":
-      points = 30;
-      _labelFormat = "MMM dd";
-      break;
-    case "3M":
-      points = 45;
-      _labelFormat = "MMM dd";
-      break;
-    case "1Y":
-      points = 12;
-      _labelFormat = "MMM yy";
-      break;
-    case "5Y":
-      points = 10;
-      _labelFormat = "yyyy";
-      break;
-  }
-
-  const data: { date: string; value: number }[] = [];
-  const now = new Date();
-
-  // Seed-based generation for deterministic curves per pair
-  let seed = (pair.charCodeAt(0) || 1) + (pair.charCodeAt(1) || 2);
-  const random = () => {
-    const x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
-  };
-
-  // Build a nice random walk starting from past back to current rate
-  let currentVal = baseRate;
-  const rawPoints: number[] = [];
-
-  for (let i = 0; i < points; i++) {
-    rawPoints.push(currentVal);
-    // Random fluctuation: +/- 0.3% of base rate
-    const change = (random() - 0.48) * 0.007 * baseRate;
-    currentVal = currentVal + change;
-  }
-
-  // Reverse so the walk ends at currentVal (baseRate) at the present day
-  rawPoints.reverse();
-
-  for (let i = 0; i < points; i++) {
-    const d = new Date(now);
-
-    if (timeframe === "1D") {
-      d.setHours(now.getHours() - (points - 1 - i));
-    } else if (timeframe === "1W" || timeframe === "1M" || timeframe === "3M") {
-      d.setDate(now.getDate() - (points - 1 - i));
-    } else if (timeframe === "1Y") {
-      d.setMonth(now.getMonth() - (points - 1 - i));
-    } else if (timeframe === "5Y") {
-      d.setFullYear(now.getFullYear() - (points - 1 - i));
-    }
-
-    let dateStr = "";
-    if (timeframe === "1D") {
-      dateStr = d.toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: false,
-      });
-    } else if (timeframe === "1W") {
-      dateStr = d.toLocaleDateString("en-US", { weekday: "short" });
-    } else if (timeframe === "1M" || timeframe === "3M") {
-      dateStr = d.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-      });
-    } else if (timeframe === "1Y") {
-      dateStr = d.toLocaleDateString("en-US", {
-        month: "short",
-        year: "2-digit",
-      });
-    } else {
-      dateStr = d.getFullYear().toString();
-    }
-
-    data.push({
-      date: dateStr,
-      value: Number(rawPoints[i].toFixed(4)),
-    });
-  }
-
-  return data;
-};
-
-// React Query Hook: Get Rates
+/**
+ * React Query hook to fetch latest exchange rates and daily differences.
+ *
+ * @param baseCurrency - Base currency code (e.g. "USD")
+ * @returns React Query result containing Record<string, RateInfo> rates map
+ */
 export function useExchangeRates(baseCurrency: string) {
+  const safeBase = VALID_CURRENCIES.has(baseCurrency.toUpperCase())
+    ? baseCurrency.toUpperCase()
+    : "USD";
   return useQuery({
-    queryKey: ["rates", baseCurrency],
+    queryKey: ["rates", safeBase],
     queryFn: async () => {
-      // Simulate network lag
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      return getRatesForBase(baseCurrency);
+      const latest = await getLatestRates(safeBase);
+
+      const latestDate = new Date(latest.date);
+      const start = new Date(latestDate);
+      start.setDate(latestDate.getDate() - 5);
+      const startStr = start.toISOString().split("T")[0];
+      const endStr = latest.date;
+
+      let history: HistoricalRatesResponse | undefined;
+      try {
+        history = await getHistoricalRates(
+          startStr,
+          endStr,
+          safeBase,
+          Object.keys(latest.rates).join(",")
+        );
+      } catch (err) {
+        console.error("Failed to fetch previous rates for change calculations:", err);
+      }
+
+      return formatRateInfo(latest, history);
     },
     staleTime: 60 * 1000,
   });
 }
 
-// React Query Hook: Get Historical Data
+/**
+ * React Query hook to fetch historical currency pair timeline range.
+ *
+ * @param pair - Currency code pair string (e.g. "USD/EUR")
+ * @param timeframe - Timeframe selection string (1W, 1M, 3M, 1Y, 5Y)
+ * @returns React Query result containing ChartPoint coordinate array
+ */
 export function useHistoricalData(pair: string, timeframe: string) {
   return useQuery({
     queryKey: ["history", pair, timeframe],
     queryFn: async () => {
-      // Simulate network lag
-      await new Promise((resolve) => setTimeout(resolve, 400));
-      return generateHistoricalData(pair, timeframe);
+      const [base, target] = pair.split("/");
+      if (
+        !base ||
+        !target ||
+        !VALID_CURRENCIES.has(base.toUpperCase()) ||
+        !VALID_CURRENCIES.has(target.toUpperCase())
+      ) {
+        return [];
+      }
+
+      const { startDate, endDate } = calculateDateRange(timeframe);
+      const res = await getHistoricalRates(startDate, endDate, base, target);
+
+      const data: { date: string; value: number }[] = [];
+      const dates = Object.keys(res.rates).sort();
+
+      for (const dateStr of dates) {
+        const val = res.rates[dateStr][target.toUpperCase()];
+        if (val !== undefined) {
+          const d = new Date(dateStr);
+          let label = "";
+          if (timeframe === "1W") {
+            label = d.toLocaleDateString("en-US", { weekday: "short" });
+          } else if (timeframe === "1M" || timeframe === "3M") {
+            label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+          } else if (timeframe === "1Y") {
+            label = d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+          } else {
+            label = d.getFullYear().toString();
+          }
+
+          data.push({
+            date: label,
+            value: val,
+          });
+        }
+      }
+      return data;
     },
     staleTime: 5 * 60 * 1000,
   });

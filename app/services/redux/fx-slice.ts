@@ -19,7 +19,7 @@ export interface FxState {
 }
 
 const initialState: FxState = {
-  amount: "1000",
+  amount: "0",
   sendCurrency: "USD",
   receiveCurrency: "EUR",
   favorites: ["USD/JPY", "GBP/USD", "USD/CHF", "EUR/GBP", "AUD/USD", "USD/CAD"],

@@ -1,32 +1,44 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-import usdFlag from "@/assets/images/flags/us.webp";
-import eurFlag from "@/assets/images/flags/eu.webp";
-import gbpFlag from "@/assets/images/flags/gb.webp";
-import jpyFlag from "@/assets/images/flags/jp.webp";
-import chfFlag from "@/assets/images/flags/ch.webp";
-import audFlag from "@/assets/images/flags/au.webp";
-import cadFlag from "@/assets/images/flags/ca.webp";
-import inFlag from "@/assets/images/flags/in.webp";
-import cnFlag from "@/assets/images/flags/cn.webp";
-import bdFlag from "@/assets/images/flags/bd.webp";
-import nzFlag from "@/assets/images/flags/nz.webp";
-import trFlag from "@/assets/images/flags/tr.webp";
+// Glob all SVG flag assets eagerly using relative path
+const flagSvgs = import.meta.glob<{ default: string }>(
+  "../../assets/flags/*.svg",
+  { eager: true }
+);
 
-const FLAG_MAP: Record<string, string> = {
-  USD: usdFlag,
-  EUR: eurFlag,
-  GBP: gbpFlag,
-  JPY: jpyFlag,
-  CHF: chfFlag,
-  AUD: audFlag,
-  CAD: cadFlag,
-  INR: inFlag,
-  CNY: cnFlag,
-  BDT: bdFlag,
-  NZD: nzFlag,
-  TRY: trFlag,
+const CURRENCY_TO_COUNTRY: Record<string, string> = {
+  USD: "us",
+  EUR: "eu",
+  GBP: "gb",
+  JPY: "jp",
+  CHF: "ch",
+  AUD: "au",
+  CAD: "ca",
+  INR: "in",
+  CNY: "cn",
+  NZD: "nz",
+  TRY: "tr",
+  BGN: "bg",
+  BRL: "br",
+  CZK: "cz",
+  DKK: "dk",
+  HKD: "hk",
+  HUF: "hu",
+  IDR: "id",
+  ILS: "il",
+  ISK: "is",
+  KRW: "kr",
+  MXN: "mx",
+  MYR: "my",
+  NOK: "no",
+  PHP: "ph",
+  PLN: "pl",
+  RON: "ro",
+  SEK: "se",
+  SGD: "sg",
+  THB: "th",
+  ZAR: "za",
 };
 
 interface FlagImageProps extends React.ComponentProps<"img"> {
@@ -35,7 +47,12 @@ interface FlagImageProps extends React.ComponentProps<"img"> {
 }
 
 export function FlagImage({ code, className, ...props }: FlagImageProps) {
-  const src = FLAG_MAP[code.toUpperCase()];
+  const currencyCode = code.toUpperCase();
+  const countryCode = CURRENCY_TO_COUNTRY[currencyCode] || currencyCode.slice(0, 2).toLowerCase();
+  
+  const path = `../../assets/flags/${countryCode}.svg`;
+  const src = flagSvgs[path]?.default;
+  
   if (!src) return null;
 
   return (
@@ -54,3 +71,4 @@ export function FlagImage({ code, className, ...props }: FlagImageProps) {
     </span>
   );
 }
+

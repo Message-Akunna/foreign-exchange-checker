@@ -8,7 +8,7 @@ import { LiveTicker } from "./_components/live-ticker";
 import { ConverterForm } from "./_components/converter-form";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // icon
-import Logo from "@/assets/images/logo.svg?react";
+import Logo from "../_components/logo";
 import { Container } from "@/components/custom/container";
 import { ThemeSwitcher } from "@/components/custom/theme-switcher";
 ``;
@@ -59,7 +59,7 @@ export default function HomeLayout() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground relative antialiased overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background text-foreground relative antialiased overflow-x-clip">
       {/* Background glass overlay dots */}
       <div className="absolute inset-0 bg-[radial-gradient(#cef739_0.5px,transparent_0.5px)] bg-size-[16px_16px] opacity-5 pointer-events-none" />
 

@@ -1,24 +1,96 @@
 import { cn } from "@/lib/utils";
+import Marquee from "react-fast-marquee";
+import { useExchangeRates } from "@/services/queries/fx-queries";
 
-interface TickerItem {
-  pair: string;
-  rate: string;
-  change: string;
-  isPositive: boolean;
-}
-
-const TICKER_ITEMS: TickerItem[] = [
-  { pair: "USD/JPY", rate: "157.91", change: "+0.04%", isPositive: true },
-  { pair: "GBP/USD", rate: "1.3575", change: "-0.22%", isPositive: false },
-  { pair: "USD/CHF", rate: "0.9898", change: "+0.13%", isPositive: true },
-  { pair: "EUR/GBP", rate: "0.8633", change: "+0.11%", isPositive: true },
-  { pair: "AUD/USD", rate: "0.7208", change: "+0.08%", isPositive: true },
-  { pair: "USD/CAD", rate: "1.3815", change: "+0.04%", isPositive: true },
-];
+const SafeMarquee =
+  (Marquee as any).default?.default || (Marquee as any).default || Marquee;
 
 export function LiveTicker() {
+  const { data: rates } = useExchangeRates("USD");
+
+  const getTickerItems = () => {
+    if (!rates) {
+      return [
+        { pair: "USD/JPY", rate: "...", change: "...", isPositive: true },
+        { pair: "GBP/USD", rate: "...", change: "...", isPositive: true },
+        { pair: "USD/CHF", rate: "...", change: "...", isPositive: true },
+        { pair: "EUR/GBP", rate: "...", change: "...", isPositive: true },
+        { pair: "AUD/USD", rate: "...", change: "...", isPositive: true },
+        { pair: "USD/CAD", rate: "...", change: "...", isPositive: true },
+      ];
+    }
+
+    const pairs = [
+      {
+        pair: "USD/JPY",
+        getRates: () => ({
+          rate: rates.JPY?.rate ?? 0,
+          pctChange: rates.JPY?.pctChange ?? 0,
+        }),
+      },
+      {
+        pair: "GBP/USD",
+        getRates: () => {
+          const rateGbp = rates.GBP?.rate ?? 1;
+          const rate = 1 / rateGbp;
+          const prev = 1 / (rates.GBP?.open ?? 1);
+          const pctChange = prev > 0 ? ((rate - prev) / prev) * 100 : 0;
+          return { rate, pctChange };
+        },
+      },
+      {
+        pair: "USD/CHF",
+        getRates: () => ({
+          rate: rates.CHF?.rate ?? 0,
+          pctChange: rates.CHF?.pctChange ?? 0,
+        }),
+      },
+      {
+        pair: "EUR/GBP",
+        getRates: () => {
+          const rateEur = rates.EUR?.rate ?? 1;
+          const rateGbp = rates.GBP?.rate ?? 1;
+          const rate = rateGbp / rateEur;
+          const prev = (rates.GBP?.open ?? 1) / (rates.EUR?.open ?? 1);
+          const pctChange = prev > 0 ? ((rate - prev) / prev) * 100 : 0;
+          return { rate, pctChange };
+        },
+      },
+      {
+        pair: "AUD/USD",
+        getRates: () => {
+          const rateAud = rates.AUD?.rate ?? 1;
+          const rate = 1 / rateAud;
+          const prev = 1 / (rates.AUD?.open ?? 1);
+          const pctChange = prev > 0 ? ((rate - prev) / prev) * 100 : 0;
+          return { rate, pctChange };
+        },
+      },
+      {
+        pair: "USD/CAD",
+        getRates: () => ({
+          rate: rates.CAD?.rate ?? 0,
+          pctChange: rates.CAD?.pctChange ?? 0,
+        }),
+      },
+    ];
+
+    return pairs.map(({ pair, getRates }) => {
+      const { rate, pctChange } = getRates();
+      const isPositive = pctChange >= 0;
+      return {
+        pair,
+        rate: rate > 0 ? rate.toFixed(4) : "...",
+        change: rate > 0 ? `${isPositive ? "+" : ""}${pctChange.toFixed(2)}%` : "...",
+        isPositive,
+      };
+    });
+  };
+
+  const tickerItems = getTickerItems();
+
   return (
-    <div className="flex w-full items-stretch bg-card text-xs select-none overflow-hidden">
+    <div className="flex w-full items-stretch bg-card text-xs overflow-hidden sticky top-0 z-20 border-y border-background">
       {/* Label */}
       <div className="flex items-center gap-2 bg-primary px-4 py-3 font-medium tracking-wider text-primary-foreground uppercase shrink-0">
         <span className="relative flex size-1.5">
@@ -30,28 +102,30 @@ export function LiveTicker() {
 
       {/* Sliding track */}
       <div className="flex flex-1 items-center overflow-x-auto no-scrollbar">
-        <div className="flex animate-infinite-scroll whitespace-nowrap items-center">
+        <SafeMarquee
+          pauseOnHover={true}
+          className="flex animate-infinite-scroll whitespace-nowrap items-center"
+        >
           {/* Double items for continuous loop */}
-          {[...TICKER_ITEMS, ...TICKER_ITEMS].map((item, idx) => (
-            <div
-              key={`${item.pair}-${idx}`}
-              className="flex items-center gap-2.5 shrink-0 border-r px-3 py-3 last:border-0"
-            >
-              <span className="text-muted-foreground font-normal">
-                {item.pair}
-              </span>
-              <span className="text-foreground font-medium">{item.rate}</span>
-              <span
-                className={cn(
-                  "flex items-center gap-0.5 font-normal",
-                  item.isPositive ? "text-success" : "text-destructive"
-                )}
-              >
-                {item.isPositive ? "▲" : "▼"} {item.change}
-              </span>
+          {[...tickerItems, ...tickerItems].map((item, idx) => (
+            <div key={`${item.pair}-${idx}`} className="">
+              <div className="relative flex items-center gap-2.5 shrink-0 px-5 py-3 border-r! border-border! last:border-0">
+                <span className="text-muted-foreground font-normal">
+                  {item.pair}
+                </span>
+                <span className="text-foreground font-medium">{item.rate}</span>
+                <span
+                  className={cn(
+                    "flex items-center gap-0.5 font-normal",
+                    item.isPositive ? "text-success" : "text-destructive"
+                  )}
+                >
+                  {item.isPositive ? "▲" : "▼"} {item.change}
+                </span>
+              </div>
             </div>
           ))}
-        </div>
+        </SafeMarquee>
       </div>
     </div>
   );

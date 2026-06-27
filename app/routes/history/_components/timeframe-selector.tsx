@@ -1,7 +1,7 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 
-export const TIMEFRAMES = ["1D", "1W", "1M", "3M", "1Y", "5Y"] as const;
+export const TIMEFRAMES = ["1W", "1M", "3M", "1Y", "5Y"] as const;
 
 interface TimeframeSelectorProps {
   value: string;
