@@ -3,12 +3,19 @@ import * as React from "react";
 import {
   formatNumeral,
   type FormatNumeralOptions,
-  NumeralThousandGroupStyles,
+  // NumeralThousandGroupStyles,
 } from "cleave-zen";
 // shadcn
 import { Input } from "@/components/ui/input";
 // utils
 import { cn } from "@/lib/utils";
+
+export declare enum NumeralThousandGroupStyles {
+  THOUSAND = "thousand",
+  LAKH = "lakh",
+  WAN = "wan",
+  NONE = "none",
+}
 
 interface AmountInputProps
   extends Omit<
