@@ -1,10 +1,6 @@
 import * as React from "react";
 // lib
-import {
-  formatNumeral,
-  type FormatNumeralOptions,
-  // NumeralThousandGroupStyles,
-} from "cleave-zen";
+import * as cleaveZen from "cleave-zen";
 // shadcn
 import { Input } from "@/components/ui/input";
 // utils
@@ -24,28 +20,28 @@ interface AmountInputProps
   > {
   value?: string | number;
   onChange?: (value: string) => void; // raw numeric value
-  options?: FormatNumeralOptions;
+  options?: cleaveZen.FormatNumeralOptions;
 }
 
-const DEFAULT_OPTIONS: FormatNumeralOptions = {
+const DEFAULT_OPTIONS: cleaveZen.FormatNumeralOptions = {
   delimiter: ",",
-  numeralThousandsGroupStyle: NumeralThousandGroupStyles.THOUSAND,
+  numeralThousandsGroupStyle: cleaveZen.NumeralThousandGroupStyles.THOUSAND,
 };
 
 export const AmountInput = React.forwardRef<HTMLInputElement, AmountInputProps>(
   ({ className, value, onChange, options, ...props }, ref) => {
-    const config = React.useMemo<FormatNumeralOptions>(
+    const config = React.useMemo<cleaveZen.FormatNumeralOptions>(
       () => ({ ...DEFAULT_OPTIONS, ...options }),
       [options]
     );
 
     const formattedValue = React.useMemo(() => {
       if (value === undefined || value === null || value === "") return "";
-      return formatNumeral(String(value), config);
+      return cleaveZen.formatNumeral(String(value), config);
     }, [value, config]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const formatted = formatNumeral(event.target.value, config);
+      const formatted = cleaveZen.formatNumeral(event.target.value, config);
       const raw = formatted.replaceAll(config.delimiter ?? ",", "");
       onChange?.(raw);
     };
