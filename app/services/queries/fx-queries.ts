@@ -54,7 +54,10 @@ export function useExchangeRates(baseCurrency: string) {
           Object.keys(latest.rates).join(",")
         );
       } catch (err) {
-        console.error("Failed to fetch previous rates for change calculations:", err);
+        console.error(
+          "Failed to fetch previous rates for change calculations:",
+          err
+        );
       }
 
       return formatRateInfo(latest, history);
@@ -93,16 +96,22 @@ export function useHistoricalData(pair: string, timeframe: string) {
       for (const dateStr of dates) {
         const val = res.rates[dateStr][target.toUpperCase()];
         if (val !== undefined) {
-          const d = new Date(dateStr);
+          const date = new Date(dateStr);
           let label = "";
           if (timeframe === "1W") {
-            label = d.toLocaleDateString("en-US", { weekday: "short" });
+            label = date.toLocaleDateString("en-US", { weekday: "short" });
           } else if (timeframe === "1M" || timeframe === "3M") {
-            label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+            label = date.toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+            });
           } else if (timeframe === "1Y") {
-            label = d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+            label = date.toLocaleDateString("en-US", {
+              month: "short",
+              year: "2-digit",
+            });
           } else {
-            label = d.getFullYear().toString();
+            label = date.getFullYear().toString();
           }
 
           data.push({

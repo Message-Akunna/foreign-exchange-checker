@@ -19,9 +19,9 @@ export interface FxState {
 }
 
 const initialState: FxState = {
-  amount: "0",
+  amount: "",
   sendCurrency: "USD",
-  receiveCurrency: "EUR",
+  receiveCurrency: "GBP",
   favorites: ["USD/JPY", "GBP/USD", "USD/CHF", "EUR/GBP", "AUD/USD", "USD/CAD"],
   logs: [
     {

@@ -29,83 +29,10 @@ import { useExchangeRates } from "@/services/queries/fx-queries";
 // utils
 import { cn } from "@/lib/utils";
 
-const TIMEZONE_TO_CURRENCY: Record<string, string> = {
-  "ASIA/TOKYO": "JPY",
-  "ASIA/KOLKATA": "INR",
-  "ASIA/CALCUTTA": "INR",
-  "ASIA/SHANGHAI": "CNY",
-  "ASIA/HONG_KONG": "HKD",
-  "ASIA/SEOUL": "KRW",
-  "ASIA/SINGAPORE": "SGD",
-  "ASIA/JAKARTA": "IDR",
-  "ASIA/MANILA": "PHP",
-  "ASIA/BANGKOK": "THB",
-  "ASIA/KUALA_LUMPUR": "MYR",
-  "AUSTRALIA/SYDNEY": "AUD",
-  "AUSTRALIA/MELBOURNE": "AUD",
-  "AUSTRALIA/BRISBANE": "AUD",
-  "AUSTRALIA/PERTH": "AUD",
-  "PACIFIC/AUCKLAND": "NZD",
-  "EUROPE/LONDON": "GBP",
-  "EUROPE/BELFAST": "GBP",
-  "EUROPE/ZURICH": "CHF",
-  "EUROPE/ISTANBUL": "TRY",
-  "EUROPE/SOFIA": "BGN",
-  "EUROPE/PRAGUE": "CZK",
-  "EUROPE/COPENHAGEN": "DKK",
-  "EUROPE/BUDAPEST": "HUF",
-  "EUROPE/OSLO": "NOK",
-  "EUROPE/WARSAW": "PLN",
-  "EUROPE/BUCHAREST": "RON",
-  "EUROPE/STOCKHOLM": "SEK",
-  "EUROPE/REYKJAVIK": "ISK",
-  "AMERICA/NEW_YORK": "USD",
-  "AMERICA/CHICAGO": "USD",
-  "AMERICA/LOS_ANGELES": "USD",
-  "AMERICA/TORONTO": "CAD",
-  "AMERICA/VANCOUVER": "CAD",
-  "AMERICA/SAO_PAULO": "BRL",
-  "AMERICA/MEXICO_CITY": "MXN",
-  "AFRICA/JOHANNESBURG": "ZAR",
-};
-
-function getLocalCurrency(): string {
-  try {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    if (tz) {
-      const key = tz.toUpperCase();
-      if (TIMEZONE_TO_CURRENCY[key]) {
-        return TIMEZONE_TO_CURRENCY[key];
-      }
-      for (const [tzPart, currency] of Object.entries(TIMEZONE_TO_CURRENCY)) {
-        if (key.includes(tzPart)) {
-          return currency;
-        }
-      }
-      if (key.includes("EUROPE")) return "EUR";
-    }
-
-    const locale = navigator.language || navigator.languages?.[0];
-    if (locale) {
-      const country = locale.split("-")[1]?.toUpperCase();
-      const countryToCurrency: Record<string, string> = {
-        US: "USD", GB: "GBP", JP: "JPY", CH: "CHF", AU: "AUD", CA: "CAD", IN: "INR", CN: "CNY", NZ: "NZD", TR: "TRY",
-        BG: "BGN", BR: "BRL", CZ: "CZK", DK: "DKK", HK: "HKD", HU: "HUF", ID: "IDR", IL: "ILS", IS: "ISK", KR: "KRW",
-        MX: "MXN", MY: "MYR", NO: "NOK", PH: "PHP", PL: "PLN", RO: "RON", SE: "SEK", SG: "SGD", TH: "THB", ZA: "ZAR"
-      };
-      if (country && countryToCurrency[country]) {
-        return countryToCurrency[country];
-      }
-    }
-  } catch (e) {
-    console.error("Failed to detect local currency:", e);
-  }
-  return "EUR";
-}
-
 const formSchema = z.object({
   amount: z.string().refine(
     (val) => {
+      if (val === "") return true;
       const num = Number(val);
       return !Number.isNaN(num) && num >= 0;
     },
@@ -113,6 +40,7 @@ const formSchema = z.object({
   ),
   receiveAmount: z.string().refine(
     (val) => {
+      if (val === "") return true;
       const num = Number(val);
       return !Number.isNaN(num) && num >= 0;
     },
@@ -159,6 +87,8 @@ export function ConverterForm() {
 
     if (querySend) {
       dispatch(setSendCurrency(querySend));
+    } else {
+      dispatch(setSendCurrency("USD"));
     }
     if (queryAmount !== null) {
       dispatch(setAmount(queryAmount));
@@ -167,12 +97,7 @@ export function ConverterForm() {
     if (queryReceive) {
       dispatch(setReceiveCurrency(queryReceive));
     } else {
-      const detected = getLocalCurrency();
-      if (detected && detected !== "USD") {
-        dispatch(setReceiveCurrency(detected));
-      } else {
-        dispatch(setReceiveCurrency("EUR"));
-      }
+      dispatch(setReceiveCurrency("GBP"));
     }
 
     hasHydrated.current = true;
@@ -194,7 +119,7 @@ export function ConverterForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: reduxAmount,
-      receiveAmount: (Number(reduxAmount || "0") * conversionRate).toFixed(2),
+      receiveAmount: reduxAmount === "" ? "" : (Number(reduxAmount || "0") * conversionRate).toFixed(2),
       sendCurrency: sendCurrency,
       receiveCurrency: receiveCurrency,
     },
@@ -206,8 +131,12 @@ export function ConverterForm() {
   // Sync Redux state back to local RHF if changed elsewhere (e.g. from favorites page click or swap)
   React.useEffect(() => {
     setValue("amount", reduxAmount);
-    const computed = Number(reduxAmount || "0") * conversionRate;
-    setValue("receiveAmount", computed.toFixed(2));
+    if (reduxAmount === "") {
+      setValue("receiveAmount", "");
+    } else {
+      const computed = Number(reduxAmount) * conversionRate;
+      setValue("receiveAmount", computed.toFixed(2));
+    }
     setValue("sendCurrency", sendCurrency);
     setValue("receiveCurrency", receiveCurrency);
   }, [reduxAmount, sendCurrency, receiveCurrency, setValue, conversionRate]);

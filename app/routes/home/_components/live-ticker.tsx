@@ -1,23 +1,17 @@
 import { cn } from "@/lib/utils";
 import Marquee from "react-fast-marquee";
 import { useExchangeRates } from "@/services/queries/fx-queries";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SafeMarquee =
   (Marquee as any).default?.default || (Marquee as any).default || Marquee;
 
 export function LiveTicker() {
-  const { data: rates } = useExchangeRates("USD");
+  const { data: rates, isLoading, isError } = useExchangeRates("USD");
 
   const getTickerItems = () => {
     if (!rates) {
-      return [
-        { pair: "USD/JPY", rate: "...", change: "...", isPositive: true },
-        { pair: "GBP/USD", rate: "...", change: "...", isPositive: true },
-        { pair: "USD/CHF", rate: "...", change: "...", isPositive: true },
-        { pair: "EUR/GBP", rate: "...", change: "...", isPositive: true },
-        { pair: "AUD/USD", rate: "...", change: "...", isPositive: true },
-        { pair: "USD/CAD", rate: "...", change: "...", isPositive: true },
-      ];
+      return [];
     }
 
     const pairs = [
@@ -102,30 +96,49 @@ export function LiveTicker() {
 
       {/* Sliding track */}
       <div className="flex flex-1 items-center overflow-x-auto no-scrollbar">
-        <SafeMarquee
-          pauseOnHover={true}
-          className="flex animate-infinite-scroll whitespace-nowrap items-center"
-        >
-          {/* Double items for continuous loop */}
-          {[...tickerItems, ...tickerItems].map((item, idx) => (
-            <div key={`${item.pair}-${idx}`} className="">
-              <div className="relative flex items-center gap-2.5 shrink-0 px-5 py-3 border-r! border-border! last:border-0">
-                <span className="text-muted-foreground font-normal">
-                  {item.pair}
-                </span>
-                <span className="text-foreground font-medium">{item.rate}</span>
-                <span
-                  className={cn(
-                    "flex items-center gap-0.5 font-normal",
-                    item.isPositive ? "text-success" : "text-destructive"
-                  )}
-                >
-                  {item.isPositive ? "▲" : "▼"} {item.change}
-                </span>
+        {isLoading ? (
+          <div className="flex flex-1 items-center gap-6 px-5 py-3">
+            {Array.from({ length: 6 }).map((_, index) => {
+              const widths = ["w-24", "w-28", "w-24", "w-26", "w-24", "w-28"];
+              return (
+                <Skeleton
+                  key={`ticker-skeleton-${index}`}
+                  className={cn("h-4 shrink-0", widths[index % widths.length])}
+                />
+              );
+            })}
+          </div>
+        ) : isError ? (
+          <div className="flex flex-1 items-center px-5 py-3 text-destructive gap-2 text-xs font-normal">
+            <span>⚠️</span>
+            <span>Failed to load live exchange rates.</span>
+          </div>
+        ) : (
+          <SafeMarquee
+            pauseOnHover={true}
+            className="flex animate-infinite-scroll whitespace-nowrap items-center"
+          >
+            {/* Double items for continuous loop */}
+            {[...tickerItems, ...tickerItems].map((item, idx) => (
+              <div key={`${item.pair}-${idx}`} className="">
+                <div className="relative flex items-center gap-2.5 shrink-0 px-5 py-3 border-r! border-border! last:border-0">
+                  <span className="text-muted-foreground font-normal">
+                    {item.pair}
+                  </span>
+                  <span className="text-foreground font-medium">{item.rate}</span>
+                  <span
+                    className={cn(
+                      "flex items-center gap-0.5 font-normal",
+                      item.isPositive ? "text-success" : "text-destructive"
+                    )}
+                  >
+                    {item.isPositive ? "▲" : "▼"} {item.change}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </SafeMarquee>
+            ))}
+          </SafeMarquee>
+        )}
       </div>
     </div>
   );

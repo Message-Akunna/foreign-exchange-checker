@@ -11,10 +11,14 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logo from "../_components/logo";
 import { Container } from "@/components/custom/container";
 import { ThemeSwitcher } from "@/components/custom/theme-switcher";
-``;
+import { useCurrencies } from "@/services/queries/fx-queries";
+
 export default function HomeLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { data: currencies } = useCurrencies();
+  const currencyCount = currencies ? Object.keys(currencies).length : 0;
 
   const favoriteCount = useAppSelector((state) => state.fx.favorites.length);
   const logCount = useAppSelector((state) => state.fx.logs.length);
@@ -71,7 +75,9 @@ export default function HomeLayout() {
         <ThemeSwitcher />
         <div className="flex items-center gap-4 justify-end w-full sm:w-auto sm:justify-end">
           <div className="flex flex-1 sm:flex-auto items-center gap-1 text-xs sm:text-sm font-normal tracking-[1px] font-mono text-muted-foreground uppercase">
-            <span>55 Currencies</span>
+            <span>
+              {currencies ? `${currencyCount} Currencies` : "0 Currencies"}
+            </span>
             <span>·</span>
             <span>EOD</span>
             <span>·</span>
@@ -86,7 +92,7 @@ export default function HomeLayout() {
       {/* Main Content Area */}
       <main className="flex-1 w-full space-y-8 z-10">
         {/* Converter Card Section */}
-        <section className=" pt-8 lg:pt-12">
+        <section className="pt-8 lg:pt-12">
           <Container className="space-y-4 pb-0">
             <h2 className="font-normal leading-6 text-xl uppercase">
               Check the Rate
@@ -96,22 +102,22 @@ export default function HomeLayout() {
         </section>
 
         {/* Tab Subroute Area */}
-        <section className="pb-8 lg:pb-12">
+        <section className="pb-5 lg:pb-5">
           <Container className="space-y-6 pt-0">
             <Tabs
               value={currentTab}
               onValueChange={handleTabChange}
-              className="border-b mb-5"
+              className="sticky top-10.5 z-20 bg-background border-b mb-5 w-full"
             >
               <TabsList
                 variant="line"
-                className="justify-start gap-8 px-0 h-10 bg-transparent rounded-none"
+                className="justify-start gap-2 px-0 bg-transparent rounded-none border-0 h-10.5!"
               >
                 {tabItems.map((tab) => (
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="uppercase py-3 px-4 gap-2 after:bg-primary"
+                    className="uppercase h-auto py-2 px-4 gap-2 after:bg-primary group-data-horizontal/tabs:after:-bottom-0.25"
                   >
                     {tab.label}
                     {tab.count !== undefined && tab.count > 0 && (

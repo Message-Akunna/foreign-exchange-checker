@@ -25,7 +25,6 @@ import {
   DrawerDescription,
   DrawerHeader,
 } from "@/components/ui/drawer";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { buttonVariants } from "@/components/ui/button";
 
 export interface SelectOption {
@@ -52,6 +51,7 @@ interface SelectComboboxProps {
   onSearch?: (term: string) => void;
   align?: "start" | "center" | "end";
   modal?: boolean;
+  onScrollEnd?: () => void;
 }
 
 export function SelectCombobox({
@@ -69,22 +69,57 @@ export function SelectCombobox({
   onSearch,
   align = "start",
   modal = true,
+  onScrollEnd,
 }: SelectComboboxProps) {
   const [open, setOpen] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [visibleCount, setVisibleCount] = React.useState(20);
   const isMobile = useIsMobile();
   const triggerRef = React.useRef<HTMLButtonElement>(null);
 
   const selectedOption = options.find((option) => option.value === value);
 
+  // Reset page size whenever the search term or options collection changes
+  React.useEffect(() => {
+    if (searchTerm || options) {
+      setVisibleCount(20);
+    }
+  }, [searchTerm, options]);
+
+  // Filter options client-side based on the current search term
+  const filteredOptions = React.useMemo(() => {
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) {
+      const popular = options.filter((opt) => opt.group === "Popular");
+      const others = options.filter((opt) => opt.group !== "Popular");
+      return [...popular, ...others];
+    }
+    return options.filter((opt) => {
+      const matchCode = opt.value.toLowerCase().includes(term);
+      const matchLabel =
+        typeof opt.searchLabel === "string"
+          ? opt.searchLabel.toLowerCase().includes(term)
+          : false;
+      return matchCode || matchLabel;
+    });
+  }, [options, searchTerm]);
+
+  // Paginated/Sliced subset currently visible to the user
+  const slicedOptions = React.useMemo(() => {
+    return filteredOptions.slice(0, visibleCount);
+  }, [filteredOptions, visibleCount]);
+
+  const hasMore = filteredOptions.length > visibleCount;
+
   const hasGrouping = React.useMemo(
-    () => options.some((opt) => opt.group),
-    [options]
+    () => slicedOptions.some((opt) => opt.group),
+    [slicedOptions]
   );
 
   const groupedOptions = React.useMemo(() => {
     if (!hasGrouping) return null;
     const groups: { name: string; items: SelectOption[] }[] = [];
-    for (const option of options) {
+    for (const option of slicedOptions) {
       const groupName = option.group || "";
       let group = groups.find((g) => g.name === groupName);
       if (!group) {
@@ -94,7 +129,7 @@ export function SelectCombobox({
       group.items.push(option);
     }
     return groups;
-  }, [options, hasGrouping]);
+  }, [slicedOptions, hasGrouping]);
 
   const renderItem = (option: SelectOption) => (
     <CommandItem
@@ -103,6 +138,7 @@ export function SelectCombobox({
       onSelect={() => {
         onChange(option.value);
         setOpen(false);
+        setSearchTerm("");
       }}
       data-checked={value === option.value}
     >
@@ -113,18 +149,38 @@ export function SelectCombobox({
     </CommandItem>
   );
 
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    const isAtBottom =
+      target.scrollHeight - target.scrollTop <= target.clientHeight + 15;
+    if (isAtBottom) {
+      if (hasMore) {
+        setVisibleCount((prev) => prev + 20);
+      }
+      onScrollEnd?.();
+    }
+  };
+
   const listContent = (
-    <Command shouldFilter={!onSearch}>
+    <Command shouldFilter={false}>
       {searchable && (
         <CommandInput
           placeholder={searchPlaceholder}
-          onValueChange={onSearch}
+          onValueChange={(val) => {
+            setSearchTerm(val);
+            onSearch?.(val);
+          }}
           className="p-0"
         />
       )}
       <CommandList>
-        <ScrollArea className={cn("max-h-72", !searchable && "h-auto")}>
-          <CommandEmpty>No results found.</CommandEmpty>
+        <div
+          className={cn("max-h-144 overflow-y-auto pr-1 space-y-1 p-1", !searchable && "h-auto")}
+          onScroll={handleScroll}
+        >
+          {slicedOptions.length === 0 && (
+            <CommandEmpty>No results found.</CommandEmpty>
+          )}
           {hasGrouping && groupedOptions ? (
             groupedOptions.map((group) => (
               <CommandGroup
@@ -146,10 +202,10 @@ export function SelectCombobox({
             ))
           ) : (
             <CommandGroup>
-              {options.map((option) => renderItem(option))}
+              {slicedOptions.map((option) => renderItem(option))}
             </CommandGroup>
           )}
-        </ScrollArea>
+        </div>
       </CommandList>
     </Command>
   );
@@ -227,7 +283,7 @@ export function SelectCombobox({
         className={cn("min-w-(--anchor-width) p-0", popoverClassName)}
         align={align}
       >
-        {listContent}
+        {open && listContent}
       </PopoverContent>
     </Popover>
   );

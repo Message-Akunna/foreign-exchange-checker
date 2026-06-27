@@ -9,7 +9,7 @@ import {
 } from "@/services/redux/fx-slice";
 import { EmptyState } from "@/components/custom/empty-state";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { FxCard } from "../_components/fx-card";
 import { ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 import { LogCard } from "./_components/log-card";
@@ -58,11 +58,11 @@ export default function LogsPage() {
   }
 
   return (
-    <Card className="space-y-5 py-5 gap-0">
-      {/* Header Info */}
-      <CardHeader className="flex items-start justify-between px-5">
-        <div className="text-sm uppercase">CONVERSION LOG</div>
-        <div className="flex items-center gap-4">
+    <FxCard
+      title={<div className="text-sm uppercase">CONVERSION LOG</div>}
+      headerClassName="items-start"
+      headerRight={
+        <>
           <div className="text-xs uppercase text-muted-foreground">
             {logs.length} LOGGED
           </div>
@@ -74,20 +74,17 @@ export default function LogsPage() {
           >
             Clear All
           </Button>
-        </div>
-      </CardHeader>
-
-      {/* Logs List */}
-      <CardContent className="space-y-3">
-        {logs.map((log) => (
-          <LogCard
-            key={log.id}
-            log={log}
-            onSelect={() => handleRestoreLog(log)}
-            onDelete={() => handleDeleteLog(log.id)}
-          />
-        ))}
-      </CardContent>
-    </Card>
+        </>
+      }
+    >
+      {logs.map((log) => (
+        <LogCard
+          key={log.id}
+          log={log}
+          onSelect={() => handleRestoreLog(log)}
+          onDelete={() => handleDeleteLog(log.id)}
+        />
+      ))}
+    </FxCard>
   );
 }

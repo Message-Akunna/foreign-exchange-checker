@@ -1,36 +1,10 @@
 /**
- * Set of ISO currency codes currently supported by the Frankfurter API integration.
+ * Set of ISO currency codes dynamically validated.
+ * Supports any 3-letter or 4-letter currency code.
  */
-export const VALID_CURRENCIES = new Set([
-  "USD",
-  "EUR",
-  "GBP",
-  "JPY",
-  "CHF",
-  "AUD",
-  "CAD",
-  "INR",
-  "CNY",
-  "NZD",
-  "TRY",
-  "BGN",
-  "BRL",
-  "CZK",
-  "DKK",
-  "HKD",
-  "HUF",
-  "IDR",
-  "ILS",
-  "ISK",
-  "KRW",
-  "MXN",
-  "MYR",
-  "NOK",
-  "PHP",
-  "PLN",
-  "RON",
-  "SEK",
-  "SGD",
-  "THB",
-  "ZAR",
-]);
+export const VALID_CURRENCIES = {
+  has: (code: string | undefined | null): boolean => {
+    if (!code) return false;
+    return /^[A-Z]{3,4}$/i.test(code);
+  }
+};

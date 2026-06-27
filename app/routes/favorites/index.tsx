@@ -8,7 +8,7 @@ import {
 import { useExchangeRates } from "@/services/queries/fx-queries";
 import { EmptyState } from "@/components/custom/empty-state";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { FxCard } from "../_components/fx-card";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -53,29 +53,27 @@ export default function FavoritesPage() {
   }
 
   return (
-    <Card className="space-y-5 py-5 gap-0">
-      {/* Header Info */}
-      <CardHeader className="flex items-center justify-between px-5">
+    <FxCard
+      title={
         <div className="flex items-center gap-2 uppercase">
           <span className="text-sm">PINNED PAIRS</span>
         </div>
+      }
+      headerRight={
         <div className="text-xs uppercase text-muted-foreground">
           {favorites.length} FAVORITES
         </div>
-      </CardHeader>
-
-      {/* Comparisons List */}
-      <CardContent className="space-y-3">
-        {favorites.map((pair) => (
-          <FavoriteCard
-            key={pair}
-            pair={pair}
-            onSelect={() => handleSelectFavorite(pair)}
-            onRemove={() => handleRemoveFavorite(pair)}
-          />
-        ))}
-      </CardContent>
-    </Card>
+      }
+    >
+      {favorites.map((pair) => (
+        <FavoriteCard
+          key={pair}
+          pair={pair}
+          onSelect={() => handleSelectFavorite(pair)}
+          onRemove={() => handleRemoveFavorite(pair)}
+        />
+      ))}
+    </FxCard>
   );
 }
 

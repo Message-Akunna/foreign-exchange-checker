@@ -36,10 +36,10 @@ export function ChartPanel({
   className,
 }: ChartPanelProps) {
   return (
-    <Card className={cn("rounded-2.5xl p-0", className)}>
-      <CardContent className="p-5 space-y-5">
+    <Card className={cn("flex flex-col h-[calc(100dvh-260px)] min-h-[300px] rounded-2.5xl p-0 overflow-hidden", className)}>
+      <CardContent className="flex-1 flex flex-col p-5 space-y-5 overflow-hidden">
         {/* Header inside Chart Card */}
-        <div className="flex items-center justify-between pb-4">
+        <div className="flex items-center justify-between pb-4 shrink-0">
           <h3 className="text-base">{currentPair}</h3>
           <div className="text-xs text-muted-foreground">
             <span className="">
@@ -51,7 +51,7 @@ export function ChartPanel({
         </div>
 
         {/* Recharts Area Chart */}
-        <div className="h-80 w-full text-sm">
+        <div className="flex-1 w-full text-sm min-h-[200px]">
           {historyLoading ? (
             <div className="h-full w-full flex items-center justify-center text-muted-foreground animate-pulse">
               Loading Chart Data...
