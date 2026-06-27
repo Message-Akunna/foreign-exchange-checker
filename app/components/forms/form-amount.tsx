@@ -1,5 +1,6 @@
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
-import { AmountInput } from "@/components/forms/amount-input";
+// import { AmountInput } from "@/components/forms/amount-input";
+import { Input } from "@/components/ui/input";
 import FormController from "./form-controller";
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -17,8 +18,13 @@ const formAmountVariants = cva("", {
   },
 });
 
-type FormAmountProps<T extends FieldValues> = Omit<
+/* Omit<
   React.ComponentProps<typeof AmountInput>,
+  "value"
+> & */
+
+type FormAmountProps<T extends FieldValues> = Omit<
+  React.ComponentProps<typeof Input>,
   "value"
 > &
   VariantProps<typeof formAmountVariants> & {
@@ -46,7 +52,7 @@ export const FormAmount = <T extends FieldValues>({
       className={className}
       description={description}
       render={({ field, fieldState }) => (
-        <AmountInput
+        <Input
           {...amountProps}
           {...field}
           value={field.value ?? ""}
