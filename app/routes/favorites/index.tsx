@@ -105,10 +105,10 @@ function FavoriteCard({ pair, onSelect, onRemove }: FavoriteCardProps) {
   return (
     <ListItemCard onSelect={onSelect}>
       {/* Left Side: Currency pair arrows */}
-      <div className="flex items-center gap-5">
-        <span className="text-sm font-semibold text-foreground">
-          {base} → {target}
-        </span>
+      <div className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <span>{base}</span>
+        <span className="text-muted-foreground"> → </span>
+        <span>{target}</span>
       </div>
 
       {/* Right Side: Rate value, Percent change and Active Star button */}

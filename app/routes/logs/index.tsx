@@ -60,10 +60,8 @@ export default function LogsPage() {
   return (
     <Card className="space-y-5 py-5 gap-0">
       {/* Header Info */}
-      <CardHeader className="flex items-center justify-between px-5">
-        <div className="flex items-center gap-2 uppercase">
-          <span className="text-sm">CONVERSION LOG</span>
-        </div>
+      <CardHeader className="flex items-start justify-between px-5">
+        <div className="text-sm uppercase">CONVERSION LOG</div>
         <div className="flex items-center gap-4">
           <div className="text-xs uppercase text-muted-foreground">
             {logs.length} LOGGED

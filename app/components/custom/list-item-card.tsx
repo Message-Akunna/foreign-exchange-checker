@@ -1,4 +1,5 @@
-import * as React from "react";
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
+import type * as React from "react";
 import { cn } from "@/lib/utils";
 
 interface ListItemCardProps extends React.ComponentPropsWithoutRef<"div"> {

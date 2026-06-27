@@ -9,7 +9,7 @@ const formAmountVariants = cva("", {
     variant: {
       input: "",
       display:
-        "!border-0 !bg-transparent disabled:bg-transparent !p-0 !text-[40px] h-10 !leading-none font-mono font-bold tracking-tight transition-all duration-300 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 outline-none focus:outline-none focus:ring-0",
+        "!border-0 !bg-transparent disabled:bg-transparent !p-0 !text-[40px] !leading-none font-bold tracking-tight transition-all duration-300 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 outline-none focus:outline-none focus:ring-0",
     },
   },
   defaultVariants: {
