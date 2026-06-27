@@ -119,6 +119,7 @@ export default function HistoryPage() {
         lastVal={lastVal}
         historyLoading={historyLoading}
         historyData={historyData}
+        timeframe={timeframe}
       />
     </div>
   );

@@ -96,26 +96,8 @@ export function useHistoricalData(pair: string, timeframe: string) {
       for (const dateStr of dates) {
         const val = res.rates[dateStr][target.toUpperCase()];
         if (val !== undefined) {
-          const date = new Date(dateStr);
-          let label = "";
-          if (timeframe === "1W") {
-            label = date.toLocaleDateString("en-US", { weekday: "short" });
-          } else if (timeframe === "1M" || timeframe === "3M") {
-            label = date.toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            });
-          } else if (timeframe === "1Y") {
-            label = date.toLocaleDateString("en-US", {
-              month: "short",
-              year: "2-digit",
-            });
-          } else {
-            label = date.getFullYear().toString();
-          }
-
           data.push({
-            date: label,
+            date: dateStr,
             value: val,
           });
         }

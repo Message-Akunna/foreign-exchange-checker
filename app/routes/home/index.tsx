@@ -117,7 +117,7 @@ export default function HomeLayout() {
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="uppercase h-auto py-2 px-4 gap-2 after:bg-primary group-data-horizontal/tabs:after:-bottom-0.25"
+                    className="uppercase h-auto py-2 px-4 gap-2 after:bg-primary group-data-horizontal/tabs:after:-bottom-0.25 group-data-horizontal/tabs:after:h-0.25"
                   >
                     {tab.label}
                     {tab.count !== undefined && tab.count > 0 && (

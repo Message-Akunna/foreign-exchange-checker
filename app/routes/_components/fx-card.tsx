@@ -23,7 +23,7 @@ export function FxCard({
   className,
   headerClassName,
   contentClassName,
-  heightOffset = 115,
+  heightOffset = 128,
 }: FxCardProps) {
   return (
     <Card

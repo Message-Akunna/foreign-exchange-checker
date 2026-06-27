@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
+import { format, parseISO, getWeekOfMonth } from "date-fns";
 
 interface ChartPanelProps {
   currentPair: string;
@@ -17,6 +17,7 @@ interface ChartPanelProps {
   lastVal: number;
   historyLoading: boolean;
   historyData?: { date: string; value: number }[];
+  timeframe: string;
   className?: string;
 }
 
@@ -27,16 +28,69 @@ const formatValue = (val: number) => {
   });
 };
 
+const formatXAxisTick = (dateStr: string, timeframe: string) => {
+  try {
+    const date = parseISO(dateStr);
+    const tf = timeframe.toUpperCase();
+
+    if (tf === "1W" || tf === "1M") {
+      return format(date, "d MMM");
+    }
+    if (tf === "3M") {
+      const week = getWeekOfMonth(date);
+      const monthStr = format(date, "MMM");
+      return `W${week} ${monthStr}`;
+    }
+    if (tf === "1Y") {
+      return format(date, "MMM yy");
+    }
+    if (tf === "5Y") {
+      const quarter = Math.floor(date.getMonth() / 3) + 1;
+      const yearStr = format(date, "yy");
+      return ` Q${quarter} ${yearStr} `;
+    }
+    return format(date, "d MMM");
+  } catch {
+    return dateStr;
+  }
+};
+
+const getXAxisInterval = (timeframe: string) => {
+  const tf = timeframe.toUpperCase();
+  if (tf === "1W") return 0; // show all
+  if (tf === "1M") return 3; // approx 4 days apart (index spacing of 4)
+  if (tf === "3M") return 4; // weekly (every 5 weekdays)
+  if (tf === "1Y") return 19; // monthly (every 20 weekdays)
+  if (tf === "5Y") return 59; // quarterly (every 60 weekdays)
+  return "preserveEnd";
+};
+
+const formatTooltipLabel = (label: any) => {
+  if (typeof label !== "string") return "";
+  try {
+    const date = parseISO(label);
+    return format(date, "EEEE, MMMM d, yyyy");
+  } catch {
+    return String(label);
+  }
+};
+
 export function ChartPanel({
   currentPair,
   ratesLoading,
   lastVal,
   historyLoading,
   historyData,
+  timeframe,
   className,
 }: ChartPanelProps) {
   return (
-    <Card className={cn("flex flex-col h-[calc(100dvh-260px)] min-h-[300px] rounded-2.5xl p-0 overflow-hidden", className)}>
+    <Card
+      className={cn(
+        "flex flex-col h-[calc(100dvh-260px)] min-h-80 rounded-2.5xl p-0 overflow-hidden",
+        className
+      )}
+    >
       <CardContent className="flex-1 flex flex-col p-5 space-y-5 overflow-hidden">
         {/* Header inside Chart Card */}
         <div className="flex items-center justify-between pb-4 shrink-0">
@@ -51,7 +105,7 @@ export function ChartPanel({
         </div>
 
         {/* Recharts Area Chart */}
-        <div className="flex-1 w-full text-sm min-h-[200px]">
+        <div className="flex-1 w-full text-sm min-h-56">
           {historyLoading ? (
             <div className="h-full w-full flex items-center justify-center text-muted-foreground animate-pulse">
               Loading Chart Data...
@@ -60,7 +114,7 @@ export function ChartPanel({
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
                 data={historyData}
-                margin={{ top: 10, right: 5, left: -20, bottom: 0 }}
+                margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
               >
                 <defs>
                   <linearGradient
@@ -94,16 +148,21 @@ export function ChartPanel({
                   axisLine={false}
                   stroke="var(--muted-foreground)"
                   dy={10}
+                  tickFormatter={(val) => formatXAxisTick(val, timeframe)}
+                  interval={getXAxisInterval(timeframe) as any}
                 />
                 <YAxis
                   domain={["auto", "auto"]}
                   tickLine={false}
                   axisLine={false}
                   stroke="var(--muted-foreground)"
-                  dx={-10}
+                  width="auto"
+                  dx="auto"
+                  tickMargin={0}
                   tickFormatter={(val) => val.toFixed(4)}
                 />
                 <Tooltip
+                  labelFormatter={formatTooltipLabel}
                   contentStyle={{
                     backgroundColor: "oklch(0.205 0 0)",
                     borderColor: "oklch(1 0 0 / 10%)",
