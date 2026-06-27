@@ -47,7 +47,7 @@ const formatXAxisTick = (dateStr: string, timeframe: string) => {
     if (tf === "5Y") {
       const quarter = Math.floor(date.getMonth() / 3) + 1;
       const yearStr = format(date, "yy");
-      return ` Q${quarter} ${yearStr} `;
+      return `Q${quarter} ${yearStr}`;
     }
     return format(date, "d MMM");
   } catch {
@@ -61,7 +61,7 @@ const getXAxisInterval = (timeframe: string) => {
   if (tf === "1M") return 3; // approx 4 days apart (index spacing of 4)
   if (tf === "3M") return 4; // weekly (every 5 weekdays)
   if (tf === "1Y") return 19; // monthly (every 20 weekdays)
-  if (tf === "5Y") return 59; // quarterly (every 60 weekdays)
+  if (tf === "5Y") return 129; // semi-annually (every 130 weekdays = 6 months)
   return "preserveEnd";
 };
 
@@ -150,6 +150,7 @@ export function ChartPanel({
                   dy={10}
                   tickFormatter={(val) => formatXAxisTick(val, timeframe)}
                   interval={getXAxisInterval(timeframe) as any}
+                  minTickGap={25}
                 />
                 <YAxis
                   domain={["auto", "auto"]}
