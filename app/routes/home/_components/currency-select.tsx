@@ -3,7 +3,7 @@ import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import FormCombobox from "@/components/forms/form-combobox";
 import type { SelectOption } from "@/components/forms/select-combobox";
 import { FlagImage } from "@/components/custom/flag-image";
-import { useCurrencies } from "@/services/queries/fx-queries";
+import { useCurrencies } from "@/services/queries/fx";
 
 export interface CurrencyData {
   code: string;

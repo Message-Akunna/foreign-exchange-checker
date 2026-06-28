@@ -1,12 +1,16 @@
-import { useNavigate } from "react-router";
-import { useAppDispatch, useAppSelector } from "@/services/redux";
+import { useNavigate, useLocation } from "react-router";
+import { useAuth } from "@/providers/auth-provider";
+import { useAppDispatch } from "@/services/redux";
 import {
-  clearLogs,
-  deleteLog,
   setAmount,
   setSendCurrency,
   setReceiveCurrency,
 } from "@/services/redux/fx-slice";
+import {
+  useLogs,
+  useClearLogsMutation,
+  useDeleteLogMutation,
+} from "@/services/queries/logs";
 import { EmptyState } from "@/components/custom/empty-state";
 import { Button } from "@/components/ui/button";
 import { FxCard } from "../_components/fx-card";
@@ -17,15 +21,48 @@ import { LogCard } from "./_components/log-card";
 export default function LogsPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const logs = useAppSelector((state) => state.fx.logs);
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const { data: logs = [] } = useLogs();
+  const clearLogsMutation = useClearLogsMutation();
+  const deleteLogMutation = useDeleteLogMutation();
+
+  if (!isAuthenticated) {
+    return (
+      <EmptyState
+        className="py-12 border-dashed border border-border/80 bg-card/10 rounded-2xl min-h-[300px]"
+        icon={<ClipboardList className="size-5 text-muted-foreground" />}
+        title={
+          <span className="text-base font-bold mt-2">Sign In to View Logs</span>
+        }
+        description={
+          <span className="text-xs max-w-xs mt-1 block">
+            Please log in to your account to view your past conversion
+            calculations.
+          </span>
+        }
+        actions={
+          <Button
+            variant="primary"
+            onClick={() =>
+              navigate("/login", { state: { backgroundLocation: location } })
+            }
+            className="cursor-pointer mt-4"
+          >
+            Sign In
+          </Button>
+        }
+      />
+    );
+  }
 
   const handleClearLogs = () => {
-    dispatch(clearLogs());
+    clearLogsMutation.mutate();
     toast.success("Conversion logs cleared");
   };
 
   const handleDeleteLog = (id: string) => {
-    dispatch(deleteLog(id));
+    deleteLogMutation.mutate(id);
     toast.success("Log entry deleted");
   };
 

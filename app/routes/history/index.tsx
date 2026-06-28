@@ -1,9 +1,6 @@
 import * as React from "react";
 import { useAppSelector } from "@/services/redux";
-import {
-  useExchangeRates,
-  useHistoricalData,
-} from "@/services/queries/fx-queries";
+import { useExchangeRates, useHistoricalData } from "@/services/queries/fx";
 import { StatsGrid } from "./_components/stats-grid";
 import { TimeframeSelector } from "./_components/timeframe-selector";
 import { ChartPanel } from "./_components/chart-panel";

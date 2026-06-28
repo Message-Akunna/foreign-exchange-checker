@@ -5,17 +5,17 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // icons
-import { Star, Share2 } from "lucide-react";
+import { Star } from "lucide-react";
+import { ShareButton } from "./share-button";
 import { ArrowDownUpIcon } from "@animateicons/react/lucide";
 // hooks
 import { useSearchParamGroup } from "@/hooks/use-search-param-group";
 import { useAppDispatch, useAppSelector } from "@/services/redux";
+import { useAuth } from "@/providers/auth-provider";
 // redux slice
 import {
-  addLog,
   setAmount,
   swapCurrencies,
-  toggleFavorite,
   setSendCurrency,
   setReceiveCurrency,
 } from "@/services/redux/fx-slice";
@@ -25,7 +25,12 @@ import { CurrencySelect } from "./currency-select";
 import { FormAmount } from "@/components/forms/form-amount";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 // queries
-import { useExchangeRates } from "@/services/queries/fx-queries";
+import { useExchangeRates } from "@/services/queries/fx";
+import {
+  useFavorites,
+  useToggleFavoriteMutation,
+} from "@/services/queries/favorites";
+import { useAddLogMutation } from "@/services/queries/logs";
 // utils
 import { cn } from "@/lib/utils";
 
@@ -54,10 +59,13 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function ConverterForm() {
   const dispatch = useAppDispatch();
+  const { executeProtectedAction } = useAuth();
   const reduxAmount = useAppSelector((state) => state.fx.amount);
   const sendCurrency = useAppSelector((state) => state.fx.sendCurrency);
   const receiveCurrency = useAppSelector((state) => state.fx.receiveCurrency);
-  const favorites = useAppSelector((state) => state.fx.favorites);
+  const { data: favorites = [] } = useFavorites();
+  const toggleFavoriteMutation = useToggleFavoriteMutation();
+  const addLogMutation = useAddLogMutation();
 
   // React Query fetch for conversion rate
   const { data: rates, isLoading } = useExchangeRates(sendCurrency);
@@ -190,50 +198,40 @@ export function ConverterForm() {
   };
 
   const handleToggleFavorite = () => {
-    dispatch(toggleFavorite(currentPair));
-    if (isFavorited) {
-      toast.success(`Removed ${currentPair} from favorites`);
-    } else {
-      toast.success(`Added ${currentPair} to favorites`);
-    }
+    executeProtectedAction(() => {
+      toggleFavoriteMutation.mutate(currentPair);
+      if (isFavorited) {
+        toast.success(`Removed ${currentPair} from favorites`);
+      } else {
+        toast.success(`Added ${currentPair} to favorites`);
+      }
+    });
   };
 
-  const handleShare = () => {
-    if (typeof window === "undefined") return;
 
-    navigator.clipboard
-      .writeText(window.location.href)
-      .then(() => {
-        toast.success("Conversion link copied to clipboard!");
-      })
-      .catch((err) => {
-        console.error("Could not copy text: ", err);
-        toast.error("Failed to copy link");
-      });
-  };
 
   const onSubmit = (data: FormValues) => {
-    const sendVal = Number(data.amount);
-    const receiveVal = Number(data.receiveAmount);
-    if (Number.isNaN(sendVal) || sendVal <= 0) return;
+    executeProtectedAction(() => {
+      const sendVal = Number(data.amount);
+      const receiveVal = Number(data.receiveAmount);
+      if (Number.isNaN(sendVal) || sendVal <= 0) return;
 
-    dispatch(
-      addLog({
+      addLogMutation.mutate({
         amount: sendVal,
         sendCurrency,
         receiveCurrency,
         rate: conversionRate,
         result: sendVal * conversionRate,
-      })
-    );
+      });
 
-    const formattedReceive = receiveVal.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      const formattedReceive = receiveVal.toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+      toast.success(
+        `Logged conversion: ${sendVal} ${sendCurrency} to ${formattedReceive} ${receiveCurrency}`
+      );
     });
-    toast.success(
-      `Logged conversion: ${sendVal} ${sendCurrency} to ${formattedReceive} ${receiveCurrency}`
-    );
   };
 
   return (
@@ -343,16 +341,7 @@ export function ConverterForm() {
             </Button>
 
             {/* Share Conversion button */}
-            <Button
-              size="sm"
-              type="button"
-              onClick={handleShare}
-              className="uppercase"
-              variant="outline-primary"
-            >
-              <Share2 className="size-3.5" />
-              Share
-            </Button>
+            <ShareButton className="uppercase" />
           </div>
         </div>
       </CardFooter>

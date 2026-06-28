@@ -2,7 +2,7 @@ import type {
   RateInfo,
   LatestRatesResponse,
   HistoricalRatesResponse,
-} from "./fx-types";
+} from "./types";
 
 /**
  * Calculates start and end ISO date strings relative to today

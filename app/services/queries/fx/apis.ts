@@ -1,7 +1,7 @@
 import { Axios } from "@/lib/axios";
-import { FX_API_KEYS } from "./fx-keys";
-import { VALID_CURRENCIES } from "./fx-constants";
-import type { LatestRatesResponse, HistoricalRatesResponse } from "./fx-types";
+import { FX_API_KEYS } from "./keys";
+import { VALID_CURRENCIES } from "./constants";
+import type { LatestRatesResponse, HistoricalRatesResponse } from "./types";
 
 /**
  * Fetches all active currencies supported by the API.

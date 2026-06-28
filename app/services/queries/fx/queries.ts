@@ -1,15 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { VALID_CURRENCIES } from "./fx-constants";
-import { calculateDateRange, formatRateInfo } from "./fx-helpers";
-import { getCurrencies, getLatestRates, getHistoricalRates } from "./fx-apis";
-import type { HistoricalRatesResponse } from "./fx-types";
-
-// Re-export all modular assets for backward compatibility across pages
-export * from "./fx-types";
-export * from "./fx-constants";
-export * from "./fx-keys";
-export * from "./fx-helpers";
-export * from "./fx-apis";
+import { VALID_CURRENCIES } from "./constants";
+import { calculateDateRange, formatRateInfo } from "./helpers";
+import { getCurrencies, getLatestRates, getHistoricalRates } from "./apis";
+import type { HistoricalRatesResponse } from "./types";
 
 /**
  * React Query hook to fetch supported currencies mapping.

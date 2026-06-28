@@ -272,5 +272,5 @@ export const VALID_FLAGS = new Set([
   "yt",
   "za",
   "zm",
-  "zw"
+  "zw",
 ]);

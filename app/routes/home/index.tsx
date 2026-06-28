@@ -11,7 +11,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logo from "../_components/logo";
 import { Container } from "@/components/custom/container";
 import { ThemeSwitcher } from "@/components/custom/theme-switcher";
-import { useCurrencies } from "@/services/queries/fx-queries";
+import { useCurrencies } from "@/services/queries/fx";
+
+// Auth & Pages imports
+import { AuthModal } from "@/routes/auth/_components/auth-modal";
+import HistoryPage from "@/routes/history";
+import ComparePage from "@/routes/compare";
+import FavoritesPage from "@/routes/favorites";
+import LogsPage from "@/routes/logs";
+import { UserMenu } from "./_components/user-menu";
 
 export default function HomeLayout() {
   const navigate = useNavigate();
@@ -62,27 +70,53 @@ export default function HomeLayout() {
     }
   };
 
+  console.log("HomeLayout state check:", {
+    pathname: location.pathname,
+    state: location.state,
+    backgroundLocation: location.state?.backgroundLocation,
+  });
+
+  const isStandaloneAuthPage =
+    !location.state?.backgroundLocation &&
+    (location.pathname === "/login" || location.pathname === "/register");
+
+  if (isStandaloneAuthPage) {
+    return <Outlet />;
+  }
+
+  const backgroundLocation = location.state?.backgroundLocation;
+
+  const renderBackgroundPage = (pathname: string) => {
+    if (pathname.startsWith("/compare")) return <ComparePage />;
+    if (pathname.startsWith("/favorites")) return <FavoritesPage />;
+    if (pathname.startsWith("/logs")) return <LogsPage />;
+    return <HistoryPage />;
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground relative antialiased overflow-x-clip">
       {/* Background glass overlay dots */}
       <div className="absolute inset-0 bg-[radial-gradient(#cef739_0.5px,transparent_0.5px)] bg-size-[16px_16px] opacity-5 pointer-events-none" />
 
       {/* Top Header */}
-      <header className="flex flex-wrap items-center justify-between gap-x-4 gap-y-4 py-5 px-6 select-none z-10">
-        <div className="flex items-center w-auto mr-auto">
+      <header className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-4 px-6 py-5 select-none z-10 sm:grid-cols-[1fr_auto_auto] sm:items-center">
+        <div className="min-w-0">
           <Logo />
         </div>
-        <ThemeSwitcher />
-        <div className="flex items-center gap-4 justify-end w-full sm:w-auto sm:justify-end">
-          <div className="flex flex-1 sm:flex-auto items-center gap-1 text-xs sm:text-sm font-normal tracking-[1px] font-mono text-muted-foreground uppercase">
-            <span>
-              {currencies ? `${currencyCount} Currencies` : "0 Currencies"}
-            </span>
-            <span>·</span>
-            <span>EOD</span>
-            <span>·</span>
-            <span>ECB Data</span>
-          </div>
+
+        <div className="order-3 col-span-2 flex items-center gap-1 text-xs sm:order-2 sm:col-span-1 sm:text-sm font-normal tracking-[1px] font-mono text-muted-foreground uppercase">
+          <span>
+            {currencies ? `${currencyCount} Currencies` : "0 Currencies"}
+          </span>
+          <span>·</span>
+          <span>EOD</span>
+          <span>·</span>
+          <span>ECB Data</span>
+        </div>
+
+        <div className="order-2 flex shrink-0 items-center justify-end gap-3 sm:order-3">
+          <ThemeSwitcher />
+          <UserMenu />
         </div>
       </header>
 
@@ -132,7 +166,16 @@ export default function HomeLayout() {
 
             {/* Sub-route Content */}
             <div className="">
-              <Outlet />
+              {backgroundLocation ? (
+                <>
+                  {renderBackgroundPage(backgroundLocation.pathname)}
+                  <AuthModal>
+                    <Outlet />
+                  </AuthModal>
+                </>
+              ) : (
+                <Outlet />
+              )}
             </div>
           </Container>
         </section>

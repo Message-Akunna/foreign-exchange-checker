@@ -4,8 +4,11 @@ import { Star } from "lucide-react";
 // lib
 import { toast } from "sonner";
 // services
-import { toggleFavorite } from "@/services/redux/fx-slice";
-import { useExchangeRates, useCurrencies } from "@/services/queries/fx-queries";
+import { useExchangeRates, useCurrencies } from "@/services/queries/fx";
+import {
+  useFavorites,
+  useToggleFavoriteMutation,
+} from "@/services/queries/favorites";
 // components
 import { Button } from "@/components/ui/button";
 import { FlagImage } from "@/components/custom/flag-image";
@@ -14,16 +17,18 @@ import { ListItemCard } from "@/components/custom/list-item-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/custom/empty-state";
 // redux
-import { useAppDispatch, useAppSelector } from "@/services/redux";
+import { useAppSelector } from "@/services/redux";
+import { useAuth } from "@/providers/auth-provider";
 // utils
 import { cn } from "@/lib/utils";
 
 export default function ComparePage() {
-  const dispatch = useAppDispatch();
+  const { executeProtectedAction } = useAuth();
   const amount = useAppSelector((state) => state.fx.amount);
   const sendCurrency = useAppSelector((state) => state.fx.sendCurrency);
   const receiveCurrency = useAppSelector((state) => state.fx.receiveCurrency);
-  const favorites = useAppSelector((state) => state.fx.favorites);
+  const { data: favorites = [] } = useFavorites();
+  const toggleFavoriteMutation = useToggleFavoriteMutation();
 
   // Fetch dynamic currency list and rates
   const { data: rates, isLoading: ratesLoading } =
@@ -49,13 +54,15 @@ export default function ComparePage() {
   });
 
   const handleToggleFavorite = (pair: string) => {
-    dispatch(toggleFavorite(pair));
-    const isFavorited = favorites.includes(pair);
-    toast.success(
-      isFavorited
-        ? `Removed ${pair} from favorites`
-        : `Added ${pair} to favorites`
-    );
+    executeProtectedAction(() => {
+      const isFavorited = favorites.includes(pair);
+      toggleFavoriteMutation.mutate(pair);
+      toast.success(
+        isFavorited
+          ? `Removed ${pair} from favorites`
+          : `Added ${pair} to favorites`
+      );
+    });
   };
 
   if (isAmountEmpty) {
