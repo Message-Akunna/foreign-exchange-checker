@@ -38,4 +38,3 @@ export const CURRENCIES: CurrencyData[] = [
   { code: "THB", name: "Thai Baht", flag: "🇹🇭", isPopular: false },
   { code: "ZAR", name: "South African Rand", flag: "🇿🇦", isPopular: false },
 ];
-

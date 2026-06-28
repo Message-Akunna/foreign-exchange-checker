@@ -32,7 +32,7 @@ export function LogCard({ log, onSelect, onDelete }: LogCardProps) {
   });
 
   return (
-    <ListItemCard onSelect={onSelect} className="py-4"> 
+    <ListItemCard onSelect={onSelect} className="py-4">
       {/* Left Side: Time elapsed & Currency pair arrow */}
       <div className="flex items-center gap-5">
         <span className="text-xs text-muted-foreground w-16  leading-tight">

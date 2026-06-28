@@ -1,13 +1,6 @@
 import * as React from "react";
-import DOMPurify from "dompurify";
 import { cn } from "@/lib/utils";
-
-// Glob all SVG flag assets eagerly as raw strings
-const flagSvgs = import.meta.glob<string>("../../assets/flags/*.svg", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
+import { VALID_FLAGS } from "./flag-list";
 
 const CURRENCY_TO_COUNTRY: Record<string, string> = {
   USD: "us",
@@ -43,9 +36,6 @@ const CURRENCY_TO_COUNTRY: Record<string, string> = {
   ZAR: "za",
 };
 
-// Global static cache to prevent running expensive DOMPurify.sanitize on every single render of 165+ options
-const sanitizedCache: Record<string, string> = {};
-
 interface FlagImageProps extends React.ComponentProps<"span"> {
   code: string;
   className?: string;
@@ -62,42 +52,12 @@ export const FlagImage = React.memo(function FlagImage({
   const countryCode =
     CURRENCY_TO_COUNTRY[currencyCode] || currencyCode.slice(0, 2).toLowerCase();
 
-  const path = `../../assets/flags/${countryCode}.svg`;
-  const rawSvg = flagSvgs[path] || "";
+  // Keep parity with original behavior: if flag asset does not exist, return null
+  if (!VALID_FLAGS.has(countryCode)) {
+    return null;
+  }
 
-  const [isMounted, setIsMounted] = React.useState(!ssr);
-
-  React.useEffect(() => {
-    if (ssr) {
-      setIsMounted(true);
-    }
-  }, [ssr]);
-
-  // Add layout classes and force aspect ratio crop so the flag fills the size-5 container perfectly
-  const svgWithStyles = React.useMemo(() => {
-    if (!rawSvg) return "";
-    return rawSvg
-      .replace(/<svg([\s>])/i, '<svg class="w-full h-full block" preserveAspectRatio="xMidYMid slice"$1')
-      .replace(/width="[^"]*"/g, "")
-      .replace(/height="[^"]*"/g, "");
-  }, [rawSvg]);
-
-  // Safe SSR DOMPurify execution
-  const cleanSvg = React.useMemo(() => {
-    if (!svgWithStyles) return "";
-    if (!isMounted || typeof window === "undefined") {
-      return svgWithStyles;
-    }
-    const cacheKey = `${currencyCode}-${svgWithStyles.length}`;
-    if (sanitizedCache[cacheKey]) {
-      return sanitizedCache[cacheKey];
-    }
-    const sanitized = DOMPurify.sanitize(svgWithStyles, { USE_PROFILES: { svg: true } });
-    sanitizedCache[cacheKey] = sanitized;
-    return sanitized;
-  }, [svgWithStyles, isMounted, currencyCode]);
-
-  if (!rawSvg) return null;
+  const src = `/assets/images/flags/${countryCode}.webp`;
 
   return (
     <span
@@ -105,8 +65,19 @@ export const FlagImage = React.memo(function FlagImage({
         "relative inline-flex items-center justify-center size-5 rounded-full overflow-hidden bg-muted shrink-0 select-none border border-border/30 flag-image-container",
         className
       )}
-      dangerouslySetInnerHTML={{ __html: cleanSvg }}
       {...props}
-    />
+    >
+      <img
+        src={src}
+        alt={`${currencyCode} flag`}
+        className="h-5 w-auto object-cover"
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        onError={(e) => {
+          e.currentTarget.style.display = "none";
+        }}
+      />
+    </span>
   );
 });

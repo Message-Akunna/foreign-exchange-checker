@@ -27,11 +27,15 @@ export const getCurrencies = async (): Promise<Record<string, string>> => {
  * @param base - Base currency code (e.g. "USD")
  * @returns Formatted LatestRatesResponse object
  */
-export const getLatestRates = async (base: string): Promise<LatestRatesResponse> => {
-  const safeBase = VALID_CURRENCIES.has(base.toUpperCase()) ? base.toUpperCase() : "USD";
-  const raw = await Axios.get<Array<{ date: string; base: string; quote: string; rate: number }>>(
-    `${FX_API_KEYS.RATES}?base=${safeBase}`
-  );
+export const getLatestRates = async (
+  base: string
+): Promise<LatestRatesResponse> => {
+  const safeBase = VALID_CURRENCIES.has(base.toUpperCase())
+    ? base.toUpperCase()
+    : "USD";
+  const raw = await Axios.get<
+    Array<{ date: string; base: string; quote: string; rate: number }>
+  >(`${FX_API_KEYS.RATES}?base=${safeBase}`);
 
   const rates: Record<string, number> = {};
   let latestDate = new Date().toISOString().split("T")[0];
@@ -65,14 +69,18 @@ export const getHistoricalRates = async (
   base: string,
   symbols: string
 ): Promise<HistoricalRatesResponse> => {
-  const safeBase = VALID_CURRENCIES.has(base.toUpperCase()) ? base.toUpperCase() : "USD";
+  const safeBase = VALID_CURRENCIES.has(base.toUpperCase())
+    ? base.toUpperCase()
+    : "USD";
   const safeSymbols = symbols
     .split(",")
     .map((s) => s.trim().toUpperCase())
     .filter((s) => VALID_CURRENCIES.has(s))
     .join(",");
 
-  const raw = await Axios.get<Array<{ date: string; base: string; quote: string; rate: number }>>(
+  const raw = await Axios.get<
+    Array<{ date: string; base: string; quote: string; rate: number }>
+  >(
     `${FX_API_KEYS.RATES}?from=${startDate}&to=${endDate}&base=${safeBase}&quotes=${safeSymbols}`
   );
 

@@ -75,7 +75,8 @@ export function LiveTicker() {
       return {
         pair,
         rate: rate > 0 ? rate.toFixed(4) : "...",
-        change: rate > 0 ? `${isPositive ? "+" : ""}${pctChange.toFixed(2)}%` : "...",
+        change:
+          rate > 0 ? `${isPositive ? "+" : ""}${pctChange.toFixed(2)}%` : "...",
         isPositive,
       };
     });
@@ -125,7 +126,9 @@ export function LiveTicker() {
                   <span className="text-muted-foreground font-normal">
                     {item.pair}
                   </span>
-                  <span className="text-foreground font-medium">{item.rate}</span>
+                  <span className="text-foreground font-medium">
+                    {item.rate}
+                  </span>
                   <span
                     className={cn(
                       "flex items-center gap-0.5 font-normal",

@@ -7,7 +7,10 @@ import type { VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 interface AmountInputProps
-  extends Omit<CurrencyInputProps, "onChange" | "value" | "onValueChange" | "size">,
+  extends Omit<
+      CurrencyInputProps,
+      "onChange" | "value" | "onValueChange" | "size"
+    >,
     VariantProps<typeof inputVariants> {
   value?: string | number;
   onChange?: (value: string) => void;
