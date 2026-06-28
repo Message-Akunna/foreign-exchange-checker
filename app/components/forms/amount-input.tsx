@@ -1,59 +1,31 @@
 import * as React from "react";
-// lib
-import * as cleaveZen from "cleave-zen";
-// shadcn
-import { Input } from "@/components/ui/input";
-// utils
+import CurrencyInput, { type CurrencyInputProps } from "react-currency-input-field";
 import { cn } from "@/lib/utils";
-
-export declare enum NumeralThousandGroupStyles {
-  THOUSAND = "thousand",
-  LAKH = "lakh",
-  WAN = "wan",
-  NONE = "none",
-}
 
 interface AmountInputProps
   extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "onChange" | "value"
+    CurrencyInputProps,
+    "onChange" | "value" | "onValueChange"
   > {
   value?: string | number;
-  onChange?: (value: string) => void; // raw numeric value
-  options?: cleaveZen.FormatNumeralOptions;
+  onChange?: (value: string) => void;
 }
 
-const DEFAULT_OPTIONS: cleaveZen.FormatNumeralOptions = {
-  delimiter: ",",
-  numeralThousandsGroupStyle: cleaveZen.NumeralThousandGroupStyles.THOUSAND,
-};
-
 export const AmountInput = React.forwardRef<HTMLInputElement, AmountInputProps>(
-  ({ className, value, onChange, options, ...props }, ref) => {
-    const config = React.useMemo<cleaveZen.FormatNumeralOptions>(
-      () => ({ ...DEFAULT_OPTIONS, ...options }),
-      [options]
-    );
-
-    const formattedValue = React.useMemo(() => {
-      if (value === undefined || value === null || value === "") return "";
-      return cleaveZen.formatNumeral(String(value), config);
-    }, [value, config]);
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const formatted = cleaveZen.formatNumeral(event.target.value, config);
-      const raw = formatted.replaceAll(config.delimiter ?? ",", "");
-      onChange?.(raw);
-    };
-
+  ({ className, value, onChange, ...props }, ref) => {
     return (
-      <Input
+      <CurrencyInput
         ref={ref}
-        type="text"
-        inputMode="decimal"
-        value={formattedValue}
-        onChange={handleChange}
-        className={cn(className)}
+        value={value}
+        onValueChange={(val) => {
+          onChange?.(val ?? "");
+        }}
+        className={cn(
+          "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+          className
+        )}
+        decimalsLimit={6}
+        allowNegativeValue={false}
         {...props}
       />
     );
