@@ -11,7 +11,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Logo from "../_components/logo";
 import { Container } from "@/components/custom/container";
 import { ThemeSwitcher } from "@/components/custom/theme-switcher";
-import { useCurrencies } from "@/services/queries/fx-queries";
+import { useCurrencies } from "@/services/queries/fx";
+
+// Auth & Pages imports
+import { AuthModal } from "@/routes/auth/_components/auth-modal";
+import HistoryPage from "@/routes/history";
+import ComparePage from "@/routes/compare";
+import FavoritesPage from "@/routes/favorites";
+import LogsPage from "@/routes/logs";
+import { DropdownMenuAvatar } from "./_components/dropdown-menu-avatar";
 
 export default function HomeLayout() {
   const navigate = useNavigate();
@@ -62,6 +70,29 @@ export default function HomeLayout() {
     }
   };
 
+  console.log("HomeLayout state check:", {
+    pathname: location.pathname,
+    state: location.state,
+    backgroundLocation: location.state?.backgroundLocation,
+  });
+
+  const isStandaloneAuthPage =
+    !location.state?.backgroundLocation &&
+    (location.pathname === "/login" || location.pathname === "/register");
+
+  if (isStandaloneAuthPage) {
+    return <Outlet />;
+  }
+
+  const backgroundLocation = location.state?.backgroundLocation;
+
+  const renderBackgroundPage = (pathname: string) => {
+    if (pathname.startsWith("/compare")) return <ComparePage />;
+    if (pathname.startsWith("/favorites")) return <FavoritesPage />;
+    if (pathname.startsWith("/logs")) return <LogsPage />;
+    return <HistoryPage />;
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground relative antialiased overflow-x-clip">
       {/* Background glass overlay dots */}
@@ -72,7 +103,6 @@ export default function HomeLayout() {
         <div className="flex items-center w-auto mr-auto">
           <Logo />
         </div>
-        <ThemeSwitcher />
         <div className="flex items-center gap-4 justify-end w-full sm:w-auto sm:justify-end">
           <div className="flex flex-1 sm:flex-auto items-center gap-1 text-xs sm:text-sm font-normal tracking-[1px] font-mono text-muted-foreground uppercase">
             <span>
@@ -82,6 +112,10 @@ export default function HomeLayout() {
             <span>EOD</span>
             <span>·</span>
             <span>ECB Data</span>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <ThemeSwitcher />
+            <DropdownMenuAvatar />
           </div>
         </div>
       </header>
@@ -132,7 +166,16 @@ export default function HomeLayout() {
 
             {/* Sub-route Content */}
             <div className="">
-              <Outlet />
+              {backgroundLocation ? (
+                <>
+                  {renderBackgroundPage(backgroundLocation.pathname)}
+                  <AuthModal>
+                    <Outlet />
+                  </AuthModal>
+                </>
+              ) : (
+                <Outlet />
+              )}
             </div>
           </Container>
         </section>
