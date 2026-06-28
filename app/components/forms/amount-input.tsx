@@ -1,12 +1,11 @@
 import * as React from "react";
-import CurrencyInput, { type CurrencyInputProps } from "react-currency-input-field";
+import CurrencyInput, {
+  type CurrencyInputProps,
+} from "react-currency-input-field";
 import { cn } from "@/lib/utils";
 
 interface AmountInputProps
-  extends Omit<
-    CurrencyInputProps,
-    "onChange" | "value" | "onValueChange"
-  > {
+  extends Omit<CurrencyInputProps, "onChange" | "value" | "onValueChange"> {
   value?: string | number;
   onChange?: (value: string) => void;
 }
