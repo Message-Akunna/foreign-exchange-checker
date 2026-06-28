@@ -54,6 +54,32 @@ interface SelectComboboxProps {
   onScrollEnd?: () => void;
 }
 
+interface ComboboxItemProps {
+  option: SelectOption;
+  isSelected: boolean;
+  onSelect: (value: string) => void;
+}
+
+const ComboboxItem = React.memo(function ComboboxItem({
+  option,
+  isSelected,
+  onSelect,
+}: ComboboxItemProps) {
+  return (
+    <CommandItem
+      value={option.searchLabel}
+      onSelect={() => onSelect(option.value)}
+      data-checked={isSelected}
+      className="px-2 py-3 border border-transparent data-selected:border-muted-foreground transition-color"
+    >
+      <div className="flex items-center gap-2 flex-1">
+        {option.icon && <option.icon className="size-5 shrink-0" />}
+        {option.label}
+      </div>
+    </CommandItem>
+  );
+});
+
 export function SelectCombobox({
   options,
   value,
@@ -77,7 +103,9 @@ export function SelectCombobox({
   const isMobile = useIsMobile();
   const triggerRef = React.useRef<HTMLButtonElement>(null);
 
-  const selectedOption = options.find((option) => option.value === value);
+  const selectedOption = React.useMemo(() => {
+    return options.find((option) => option.value === value);
+  }, [options, value]);
 
   // Reset page size whenever the search term or options collection changes
   React.useEffect(() => {
@@ -131,46 +159,44 @@ export function SelectCombobox({
     return groups;
   }, [slicedOptions, hasGrouping]);
 
-  const renderItem = (option: SelectOption) => (
-    <CommandItem
-      key={option.value}
-      value={option.searchLabel}
-      onSelect={() => {
-        onChange(option.value);
-        setOpen(false);
-        setSearchTerm("");
-      }}
-      data-checked={value === option.value}
-      className="px-2 py-3 border border-transparent data-selected:border-muted-foreground transition-color"
-    >
-      <div className="flex items-center gap-2 flex-1">
-        {option.icon && <option.icon className="size-5 shrink-0" />}
-        {option.label}
-      </div>
-    </CommandItem>
+  const handleSelect = React.useCallback(
+    (val: string) => {
+      onChange(val);
+      setOpen(false);
+      setSearchTerm("");
+    },
+    [onChange]
   );
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const target = e.currentTarget;
-    const isAtBottom =
-      target.scrollHeight - target.scrollTop <= target.clientHeight + 15;
-    if (isAtBottom) {
-      if (hasMore) {
-        setVisibleCount((prev) => prev + 20);
+  const handleScroll = React.useCallback(
+    (e: React.UIEvent<HTMLDivElement>) => {
+      const target = e.currentTarget;
+      const isAtBottom =
+        target.scrollHeight - target.scrollTop <= target.clientHeight + 15;
+      if (isAtBottom) {
+        if (hasMore) {
+          setVisibleCount((prev) => prev + 20);
+        }
+        onScrollEnd?.();
       }
-      onScrollEnd?.();
-    }
-  };
+    },
+    [hasMore, onScrollEnd]
+  );
+
+  const handleSearchChange = React.useCallback(
+    (val: string) => {
+      setSearchTerm(val);
+      onSearch?.(val);
+    },
+    [onSearch]
+  );
 
   const listContent = (
     <Command shouldFilter={false}>
       {searchable && (
         <CommandInput
           placeholder={searchPlaceholder}
-          onValueChange={(val) => {
-            setSearchTerm(val);
-            onSearch?.(val);
-          }}
+          onValueChange={handleSearchChange}
           className="p-0"
         />
       )}
@@ -199,12 +225,26 @@ export function SelectCombobox({
                   ) : undefined
                 }
               >
-                {group.items.map((option) => renderItem(option))}
+                {group.items.map((option) => (
+                  <ComboboxItem
+                    key={option.value}
+                    option={option}
+                    isSelected={value === option.value}
+                    onSelect={handleSelect}
+                  />
+                ))}
               </CommandGroup>
             ))
           ) : (
             <CommandGroup className="p-0">
-              {slicedOptions.map((option) => renderItem(option))}
+              {slicedOptions.map((option) => (
+                <ComboboxItem
+                  key={option.value}
+                  option={option}
+                  isSelected={value === option.value}
+                  onSelect={handleSelect}
+                />
+              ))}
             </CommandGroup>
           )}
         </div>

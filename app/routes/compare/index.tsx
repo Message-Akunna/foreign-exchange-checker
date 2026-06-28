@@ -26,7 +26,8 @@ export default function ComparePage() {
   const favorites = useAppSelector((state) => state.fx.favorites);
 
   // Fetch dynamic currency list and rates
-  const { data: rates, isLoading: ratesLoading } = useExchangeRates(sendCurrency);
+  const { data: rates, isLoading: ratesLoading } =
+    useExchangeRates(sendCurrency);
   const { data: currencies, isLoading: currenciesLoading } = useCurrencies();
 
   const isLoading = ratesLoading || currenciesLoading;
@@ -36,9 +37,7 @@ export default function ComparePage() {
     if (!currencies) return [];
     return Object.entries(currencies)
       .map(([code, name]) => ({ code, name }))
-      .filter(
-        (c) => c.code !== sendCurrency && c.code !== receiveCurrency
-      )
+      .filter((c) => c.code !== sendCurrency && c.code !== receiveCurrency)
       .sort((a, b) => a.code.localeCompare(b.code));
   }, [currencies, sendCurrency, receiveCurrency]);
 
@@ -64,11 +63,14 @@ export default function ComparePage() {
       <EmptyState
         className="py-12 border-dashed border border-border/80 bg-card/10 rounded-2xl min-h-[300px]"
         title={
-          <span className="text-base font-bold mt-2">No comparison available.</span>
+          <span className="text-base font-bold mt-2">
+            No comparison available.
+          </span>
         }
         description={
           <span className="text-xs max-w-xs mt-1 block">
-            Enter an amount in SEND above to see what your money is worth in other currencies.
+            Enter an amount in SEND above to see what your money is worth in
+            other currencies.
           </span>
         }
       />
@@ -91,100 +93,98 @@ export default function ComparePage() {
         </div>
       }
     >
-      {isLoading ? (
-        Array.from({ length: 6 }).map((_, index) => (
-          <ListItemCard key={index}>
-            {/* Left Side: Flag & Currency Details skeleton */}
-            <div className="flex items-center gap-5">
-              <Skeleton className="size-6 rounded-full" />
-              <div className="flex flex-col gap-1.5">
-                <Skeleton className="h-4 w-12" />
-                <Skeleton className="h-3 w-24" />
-              </div>
-            </div>
-
-            {/* Right Side: Converted Amount, Rate & Star Toggle skeleton */}
-            <div className="flex items-center gap-5">
-              <div className="flex flex-col items-end gap-1.5">
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-3 w-10" />
-              </div>
-              <Skeleton className="size-8 rounded-md" />
-            </div>
-          </ListItemCard>
-        ))
-      ) : (
-        targetCurrencies.map((target) => {
-          const info = rates?.[target.code];
-          const rate = info?.rate ?? 1.0;
-          const calculated = Number(amount || 0) * rate;
-
-          // Formatted Value logic
-          const isZeroDecimal = ["JPY", "BDT"].includes(target.code);
-          const formattedValue = calculated.toLocaleString("en-US", {
-            minimumFractionDigits: isZeroDecimal ? 0 : 2,
-            maximumFractionDigits: isZeroDecimal ? 0 : 2,
-          });
-
-          // Formatted Rate logic
-          const formattedRate = rate.toLocaleString("en-US", {
-            minimumFractionDigits:
-              rate >= 100 ? (target.code === "INR" ? 3 : 2) : 4,
-            maximumFractionDigits: 4,
-          });
-
-          const pair = `${sendCurrency}/${target.code}`;
-          const isFavorited = favorites.includes(pair);
-
-          return (
-            <ListItemCard key={target.code}>
-              {/* Left Side: Flag & Currency Details */}
+      {isLoading
+        ? Array.from({ length: 6 }).map((_, index) => (
+            <ListItemCard key={index}>
+              {/* Left Side: Flag & Currency Details skeleton */}
               <div className="flex items-center gap-5">
-                <FlagImage
-                  code={target.code}
-                  className="size-6 rounded-full border border-border/30"
-                />
+                <Skeleton className="size-6 rounded-full" />
                 <div className="flex flex-col gap-1.5">
-                  <span className="text-sm leading-4 text-foreground">
-                    {target.code}
-                  </span>
-                  <span className="text-xs leading-3.5 text-muted-foreground">
-                    {target.name}
-                  </span>
+                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-3 w-24" />
                 </div>
               </div>
 
-              {/* Right Side: Converted Amount, Rate & Star Toggle */}
+              {/* Right Side: Converted Amount, Rate & Star Toggle skeleton */}
               <div className="flex items-center gap-5">
                 <div className="flex flex-col items-end gap-1.5">
-                  <span className="text-base leading-4.5 text-foreground">
-                    {formattedValue}
-                  </span>
-                  <span className="text-[10px] leading-2.5 text-muted-foreground">
-                    @ {formattedRate}
-                  </span>
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-3 w-10" />
                 </div>
-
-                {/* Favorite Toggle Button */}
-                <Button
-                  type="button"
-                  size="icon-sm"
-                  className="cursor-pointer"
-                  onClick={() => handleToggleFavorite(pair)}
-                  variant={isFavorited ? "outline-primary" : "outline"}
-                >
-                  <Star
-                    className={cn(
-                      "size-4",
-                      isFavorited ? "fill-primary text-primary" : "fill-none"
-                    )}
-                  />
-                </Button>
+                <Skeleton className="size-8 rounded-md" />
               </div>
             </ListItemCard>
-          );
-        })
-      )}
+          ))
+        : targetCurrencies.map((target) => {
+            const info = rates?.[target.code];
+            const rate = info?.rate ?? 1.0;
+            const calculated = Number(amount || 0) * rate;
+
+            // Formatted Value logic
+            const isZeroDecimal = ["JPY", "BDT"].includes(target.code);
+            const formattedValue = calculated.toLocaleString("en-US", {
+              minimumFractionDigits: isZeroDecimal ? 0 : 2,
+              maximumFractionDigits: isZeroDecimal ? 0 : 2,
+            });
+
+            // Formatted Rate logic
+            const formattedRate = rate.toLocaleString("en-US", {
+              minimumFractionDigits:
+                rate >= 100 ? (target.code === "INR" ? 3 : 2) : 4,
+              maximumFractionDigits: 4,
+            });
+
+            const pair = `${sendCurrency}/${target.code}`;
+            const isFavorited = favorites.includes(pair);
+
+            return (
+              <ListItemCard key={target.code}>
+                {/* Left Side: Flag & Currency Details */}
+                <div className="flex items-center gap-5">
+                  <FlagImage
+                    code={target.code}
+                    className="size-6 rounded-full border border-border/30"
+                  />
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-sm leading-4 text-foreground">
+                      {target.code}
+                    </span>
+                    <span className="text-xs leading-3.5 text-muted-foreground">
+                      {target.name}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right Side: Converted Amount, Rate & Star Toggle */}
+                <div className="flex items-center gap-5">
+                  <div className="flex flex-col items-end gap-1.5">
+                    <span className="text-base leading-4.5 text-foreground">
+                      {formattedValue}
+                    </span>
+                    <span className="text-[10px] leading-2.5 text-muted-foreground">
+                      @ {formattedRate}
+                    </span>
+                  </div>
+
+                  {/* Favorite Toggle Button */}
+                  <Button
+                    type="button"
+                    size="icon-sm"
+                    className="cursor-pointer"
+                    onClick={() => handleToggleFavorite(pair)}
+                    variant={isFavorited ? "outline-primary" : "outline"}
+                  >
+                    <Star
+                      className={cn(
+                        "size-4",
+                        isFavorited ? "fill-primary text-primary" : "fill-none"
+                      )}
+                    />
+                  </Button>
+                </div>
+              </ListItemCard>
+            );
+          })}
     </FxCard>
   );
 }

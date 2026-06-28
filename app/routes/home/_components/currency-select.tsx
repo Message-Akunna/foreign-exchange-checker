@@ -58,11 +58,13 @@ export function CurrencySelect<T extends FieldValues>({
   const options = React.useMemo(() => {
     if (!currencies) return [];
 
-    const list: CurrencyData[] = Object.entries(currencies).map(([code, name]) => ({
-      code,
-      name,
-      isPopular: ["USD", "EUR", "GBP"].includes(code.toUpperCase()),
-    }));
+    const list: CurrencyData[] = Object.entries(currencies).map(
+      ([code, name]) => ({
+        code,
+        name,
+        isPopular: ["USD", "EUR", "GBP"].includes(code.toUpperCase()),
+      })
+    );
 
     // Sort popular first, then alphabetically by code
     list.sort((a, b) => {

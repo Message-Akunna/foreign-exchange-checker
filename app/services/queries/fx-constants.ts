@@ -6,5 +6,5 @@ export const VALID_CURRENCIES = {
   has: (code: string | undefined | null): boolean => {
     if (!code) return false;
     return /^[A-Z]{3,4}$/i.test(code);
-  }
+  },
 };

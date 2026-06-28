@@ -119,7 +119,10 @@ export function ConverterForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       amount: reduxAmount,
-      receiveAmount: reduxAmount === "" ? "" : (Number(reduxAmount || "0") * conversionRate).toFixed(2),
+      receiveAmount:
+        reduxAmount === ""
+          ? ""
+          : (Number(reduxAmount || "0") * conversionRate).toFixed(2),
       sendCurrency: sendCurrency,
       receiveCurrency: receiveCurrency,
     },
