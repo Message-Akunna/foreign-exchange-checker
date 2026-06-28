@@ -1,0 +1,176 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "root": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/history/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/compare/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/favorites/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/logs/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "app/root.tsx",
+        "path": "",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/home/index": {
+        "id": "routes/home/index",
+        "parentId": "root",
+        "file": "app/routes/home/index.tsx",
+        "config": {}
+      },
+      "routes/index": {
+        "id": "routes/index",
+        "parentId": "routes/home/index",
+        "file": "app/routes/index.tsx",
+        "index": true,
+        "config": {}
+      },
+      "routes/history/index": {
+        "id": "routes/history/index",
+        "parentId": "routes/home/index",
+        "file": "app/routes/history/index.tsx",
+        "path": "history",
+        "config": {}
+      },
+      "routes/compare/index": {
+        "id": "routes/compare/index",
+        "parentId": "routes/home/index",
+        "file": "app/routes/compare/index.tsx",
+        "path": "compare",
+        "config": {}
+      },
+      "routes/favorites/index": {
+        "id": "routes/favorites/index",
+        "parentId": "routes/home/index",
+        "file": "app/routes/favorites/index.tsx",
+        "path": "favorites",
+        "config": {}
+      },
+      "routes/logs/index": {
+        "id": "routes/logs/index",
+        "parentId": "routes/home/index",
+        "file": "app/routes/logs/index.tsx",
+        "path": "logs",
+        "config": {}
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "/Users/mac/Documents/challenge/foreign-exchange-checker/app",
+    "basename": "/",
+    "buildDirectory": "/Users/mac/Documents/challenge/foreign-exchange-checker/build",
+    "future": {
+      "unstable_optimizeDeps": false,
+      "v8_passThroughRequests": false,
+      "unstable_trailingSlashAwareDataRequests": false,
+      "unstable_previewServerPrerendering": false,
+      "v8_middleware": false,
+      "v8_splitRouteModules": false,
+      "v8_viteEnvironmentApi": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "routes/home/index": {
+        "id": "routes/home/index",
+        "parentId": "root",
+        "file": "routes/home/index.tsx"
+      },
+      "routes/index": {
+        "id": "routes/index",
+        "parentId": "routes/home/index",
+        "file": "routes/index.tsx",
+        "index": true
+      },
+      "routes/history/index": {
+        "id": "routes/history/index",
+        "parentId": "routes/home/index",
+        "file": "routes/history/index.tsx",
+        "path": "history"
+      },
+      "routes/compare/index": {
+        "id": "routes/compare/index",
+        "parentId": "routes/home/index",
+        "file": "routes/compare/index.tsx",
+        "path": "compare"
+      },
+      "routes/favorites/index": {
+        "id": "routes/favorites/index",
+        "parentId": "routes/home/index",
+        "file": "routes/favorites/index.tsx",
+        "path": "favorites"
+      },
+      "routes/logs/index": {
+        "id": "routes/logs/index",
+        "parentId": "routes/home/index",
+        "file": "routes/logs/index.tsx",
+        "path": "logs"
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "subResourceIntegrity": false,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "routes/home/index.tsx",
+            "children": [
+              {
+                "file": "routes/index.tsx",
+                "index": true
+              },
+              {
+                "file": "routes/history/index.tsx",
+                "path": "history"
+              },
+              {
+                "file": "routes/compare/index.tsx",
+                "path": "compare"
+              },
+              {
+                "file": "routes/favorites/index.tsx",
+                "path": "favorites"
+              },
+              {
+                "file": "routes/logs/index.tsx",
+                "path": "logs"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}

@@ -141,6 +141,7 @@ export function SelectCombobox({
         setSearchTerm("");
       }}
       data-checked={value === option.value}
+      className="px-2 py-3 border border-transparent data-selected:border-muted-foreground transition-color"
     >
       <div className="flex items-center gap-2 flex-1">
         {option.icon && <option.icon className="size-5 shrink-0" />}
@@ -173,9 +174,12 @@ export function SelectCombobox({
           className="p-0"
         />
       )}
-      <CommandList>
+      <CommandList className="max-h-96">
         <div
-          className={cn("max-h-144 overflow-y-auto pr-1 space-y-1 p-1", !searchable && "h-auto")}
+          className={cn(
+            "max-h-96 overflow-y-auto space-y-1",
+            !searchable && "h-auto"
+          )}
           onScroll={handleScroll}
         >
           {slicedOptions.length === 0 && (
@@ -184,15 +188,13 @@ export function SelectCombobox({
           {hasGrouping && groupedOptions ? (
             groupedOptions.map((group) => (
               <CommandGroup
-                className=""
+                className="p-0 **:[[cmdk-group-heading]]:border-b **:[[cmdk-group-heading]]:py-2 **:[[cmdk-group-heading]]:mb-1"
                 key={group.name}
                 heading={
                   group.name ? (
-                    <div className="flex items-center justify-between w-full text-xs tracking-wider text-muted-foreground uppercase border-b pb-2">
+                    <div className="flex items-center justify-between w-full text-xs text-muted-foreground uppercase leading-3.5">
                       <span>{group.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {group.items.length}
-                      </span>
+                      <span className="text-xs">{group.items.length}</span>
                     </div>
                   ) : undefined
                 }
@@ -201,7 +203,7 @@ export function SelectCombobox({
               </CommandGroup>
             ))
           ) : (
-            <CommandGroup>
+            <CommandGroup className="p-0">
               {slicedOptions.map((option) => renderItem(option))}
             </CommandGroup>
           )}
