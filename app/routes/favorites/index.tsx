@@ -1,11 +1,12 @@
-import { useNavigate } from "react-router";
-import { useAppDispatch, useAppSelector } from "@/services/redux";
+import { useNavigate, useLocation } from "react-router";
+import { useAuth } from "@/providers/auth-provider";
+import { useAppDispatch } from "@/services/redux";
+import { setSendCurrency, setReceiveCurrency } from "@/services/redux/fx-slice";
+import { useExchangeRates } from "@/services/queries/fx";
 import {
-  toggleFavorite,
-  setSendCurrency,
-  setReceiveCurrency,
-} from "@/services/redux/fx-slice";
-import { useExchangeRates } from "@/services/queries/fx-queries";
+  useFavorites,
+  useToggleFavoriteMutation,
+} from "@/services/queries/favorites";
 import { EmptyState } from "@/components/custom/empty-state";
 import { Button } from "@/components/ui/button";
 import { FxCard } from "../_components/fx-card";
@@ -17,7 +18,41 @@ import { ListItemCard } from "@/components/custom/list-item-card";
 export default function FavoritesPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const favorites = useAppSelector((state) => state.fx.favorites);
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
+  const { data: favorites = [] } = useFavorites();
+  const toggleFavoriteMutation = useToggleFavoriteMutation();
+
+  if (!isAuthenticated) {
+    return (
+      <EmptyState
+        className="py-12 border-dashed border border-border/80 bg-card/10 rounded-2xl min-h-[300px]"
+        icon={<Star className="size-5 text-muted-foreground" />}
+        title={
+          <span className="text-base font-bold mt-2">
+            Sign In to View Favorites
+          </span>
+        }
+        description={
+          <span className="text-xs max-w-xs mt-1 block">
+            Please log in to your account to view and manage your favorited
+            currency pairs.
+          </span>
+        }
+        actions={
+          <Button
+            variant="primary"
+            onClick={() =>
+              navigate("/login", { state: { backgroundLocation: location } })
+            }
+            className="cursor-pointer mt-4"
+          >
+            Sign In
+          </Button>
+        }
+      />
+    );
+  }
 
   const handleSelectFavorite = (pair: string) => {
     const [base, target] = pair.split("/");
@@ -30,7 +65,7 @@ export default function FavoritesPage() {
   };
 
   const handleRemoveFavorite = (pair: string) => {
-    dispatch(toggleFavorite(pair));
+    toggleFavoriteMutation.mutate(pair);
     toast.success(`Removed ${pair} from favorites`);
   };
 

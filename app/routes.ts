@@ -12,5 +12,7 @@ export default [
     route("compare", "routes/compare/index.tsx"),
     route("favorites", "routes/favorites/index.tsx"),
     route("logs", "routes/logs/index.tsx"),
+    route("login", "routes/auth/login/index.tsx"),
+    route("register", "routes/auth/register/index.tsx"),
   ]),
 ] satisfies RouteConfig;

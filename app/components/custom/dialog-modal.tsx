@@ -67,9 +67,9 @@ export const DialogModal = ({
       >
         <DialogHeader>
           {label && <div className="">{label}</div>}
-          <DialogTitle className="text-xl font-semibold">{title}</DialogTitle>
+          <DialogTitle className="text-xl font-medium">{title}</DialogTitle>
           {description && (
-            <DialogDescription className="text-base text-muted-foreground">
+            <DialogDescription className="text-sm font-normal text-muted-foreground">
               {description}
             </DialogDescription>
           )}

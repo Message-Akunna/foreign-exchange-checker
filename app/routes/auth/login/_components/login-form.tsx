@@ -6,13 +6,9 @@ import { Link, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
 import GoogleIcon from "@/assets/icons/google.svg?react";
 import AppleIcon from "@/assets/icons/apple.svg?react";
-import { Input } from "@/components/ui/input";
-import {
-  Field,
-  FieldLabel,
-  FieldError,
-  FieldSeparator,
-} from "@/components/ui/field";
+import { FieldSeparator } from "@/components/ui/field";
+import { FormInput } from "@/components/forms/form-input";
+import { FormPasswordInput } from "@/components/forms/form-password-input";
 import { useAuth } from "@/providers/auth-provider";
 
 const loginSchema = z.object({
@@ -33,11 +29,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
 
   const backgroundLocation = location.state?.backgroundLocation;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginValues>({
+  const { control, handleSubmit } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -68,48 +60,39 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <Field>
-          <FieldLabel htmlFor="login-email">Email</FieldLabel>
-          <Input
-            id="login-email"
-            type="email"
-            placeholder="name@example.com"
-            autoComplete="email"
-            disabled={isSubmitting}
-            {...register("email")}
-            className={errors.email ? "aria-invalid" : ""}
-          />
-          {errors.email && <FieldError>{errors.email.message}</FieldError>}
-        </Field>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mb-0">
+        <FormInput
+          control={control}
+          name="email"
+          label="Email"
+          id="login-email"
+          type="email"
+          placeholder="name@example.com"
+          autoComplete="email"
+          disabled={isSubmitting}
+        />
 
-        <Field>
-          <FieldLabel htmlFor="login-password">Password</FieldLabel>
-          <Input
-            id="login-password"
-            type="password"
-            placeholder="••••••••"
-            autoComplete="current-password"
-            disabled={isSubmitting}
-            {...register("password")}
-            className={errors.password ? "aria-invalid" : ""}
-          />
-          {errors.password && (
-            <FieldError>{errors.password.message}</FieldError>
-          )}
-        </Field>
+        <FormPasswordInput
+          control={control}
+          name="password"
+          label="Password"
+          id="login-password"
+          placeholder="••••••••"
+          autoComplete="current-password"
+          disabled={isSubmitting}
+        />
 
         <Button
           type="submit"
           variant="primary"
-          className="w-full h-11"
+          className="w-full"
           disabled={isSubmitting}
         >
           {isSubmitting ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
-      <FieldSeparator>or continue with</FieldSeparator>
+      <FieldSeparator className="my-5">or continue with</FieldSeparator>
 
       <div className="grid grid-cols-2 gap-3">
         <Button

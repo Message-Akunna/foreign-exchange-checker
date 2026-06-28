@@ -15,7 +15,9 @@
       "routes/history/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/compare/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/favorites/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/logs/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+      "routes/logs/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/login/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/register/index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
     },
     "routes": {
       "root": {
@@ -65,6 +67,20 @@
         "parentId": "routes/home/index",
         "file": "app/routes/logs/index.tsx",
         "path": "logs",
+        "config": {}
+      },
+      "routes/login/index": {
+        "id": "routes/login/index",
+        "parentId": "routes/home/index",
+        "file": "app/routes/login/index.tsx",
+        "path": "login",
+        "config": {}
+      },
+      "routes/register/index": {
+        "id": "routes/register/index",
+        "parentId": "routes/home/index",
+        "file": "app/routes/register/index.tsx",
+        "path": "register",
         "config": {}
       }
     }
@@ -122,6 +138,18 @@
         "parentId": "routes/home/index",
         "file": "routes/logs/index.tsx",
         "path": "logs"
+      },
+      "routes/login/index": {
+        "id": "routes/login/index",
+        "parentId": "routes/home/index",
+        "file": "routes/login/index.tsx",
+        "path": "login"
+      },
+      "routes/register/index": {
+        "id": "routes/register/index",
+        "parentId": "routes/home/index",
+        "file": "routes/register/index.tsx",
+        "path": "register"
       }
     },
     "routeDiscovery": {
@@ -161,6 +189,14 @@
               {
                 "file": "routes/logs/index.tsx",
                 "path": "logs"
+              },
+              {
+                "file": "routes/login/index.tsx",
+                "path": "login"
+              },
+              {
+                "file": "routes/register/index.tsx",
+                "path": "register"
               }
             ]
           }

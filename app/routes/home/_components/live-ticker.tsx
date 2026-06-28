@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import Marquee from "react-fast-marquee";
-import { useExchangeRates } from "@/services/queries/fx-queries";
+import { useExchangeRates } from "@/services/queries/fx";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const SafeMarquee =

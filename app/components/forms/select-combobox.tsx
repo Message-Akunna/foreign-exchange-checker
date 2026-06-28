@@ -197,7 +197,7 @@ export function SelectCombobox({
         <CommandInput
           placeholder={searchPlaceholder}
           onValueChange={handleSearchChange}
-          className="p-0"
+          className="p-3 pl-2.5!"
         />
       )}
       <CommandList className="max-h-96">
@@ -214,7 +214,7 @@ export function SelectCombobox({
           {hasGrouping && groupedOptions ? (
             groupedOptions.map((group) => (
               <CommandGroup
-                className="p-0 **:[[cmdk-group-heading]]:border-b **:[[cmdk-group-heading]]:py-2 **:[[cmdk-group-heading]]:mb-1"
+                className="p-0 **:[[cmdk-group-heading]]:border-b **:[[cmdk-group-heading]]:py-1.75 **:[[cmdk-group-heading]]:mb-1"
                 key={group.name}
                 heading={
                   group.name ? (
@@ -322,10 +322,10 @@ export function SelectCombobox({
         <ChevronDown className="ml-2 size-4 shrink-0 opacity-50" />
       </PopoverTrigger>
       <PopoverContent
-        className={cn("min-w-(--anchor-width) p-0", popoverClassName)}
+        className={cn("min-w-(--anchor-width) w-sm p-0", popoverClassName)}
         align={align}
       >
-        {open && listContent}
+        {listContent}
       </PopoverContent>
     </Popover>
   );

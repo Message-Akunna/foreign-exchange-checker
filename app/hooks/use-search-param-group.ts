@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router";
+import { useSearchParams, useLocation } from "react-router";
 import { useCallback, useMemo } from "react";
 
 type ParamValue = string | number | boolean | null | undefined;
@@ -11,6 +11,7 @@ export function useSearchParamGroup<T extends Record<string, ParamValue>>(
   defaultValues?: Partial<T>
 ) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
 
   // Extract current values based on searchParams
   const values = useMemo(() => {
@@ -54,10 +55,10 @@ export function useSearchParamGroup<T extends Record<string, ParamValue>>(
           }
           return next;
         },
-        { replace: true }
+        { replace: true, state: location.state }
       );
     },
-    [setSearchParams, values]
+    [setSearchParams, values, location.state]
   );
 
   return [values, setParams] as const;
