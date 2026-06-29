@@ -103,4 +103,4 @@ npm install
 
 ## 📂 Project Documentation
 
-For a detailed breakdown of the file structure, database collection design, and code patterns, refer to the [Project Documentation](file:///Users/mac/Documents/challenge/foreign-exchange-checker/docs/project-overview.md).
+For a detailed breakdown of the file structure, database collection design, and code patterns, refer to the [Project Documentation](/docs/project-overview.md).
