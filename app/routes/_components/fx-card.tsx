@@ -32,20 +32,20 @@ export function FxCard({
     >
       <CardHeader
         className={cn(
-          "flex items-center justify-between p-5 shrink-0",
+          "flex flex-wrap items-center justify-between gap-2 p-4 lg:p-5 shrink-0 text-nowrap",
           headerClassName
         )}
       >
         {title}
         {headerRight && (
-          <div className="flex items-center gap-4 shrink-0 text-sm">
+          <div className="flex items-center gap-4 shrink-0 text-nowrap text-sm">
             {headerRight}
           </div>
         )}
       </CardHeader>
       <CardContent
         className={cn(
-          "flex-1 overflow-y-auto space-y-3 px-5 pb-5 pt-0",
+          "flex-1 overflow-y-auto space-y-3 px-4 pb-4 lg:px-5 lg:pb-5 pt-0",
           contentClassName
         )}
       >

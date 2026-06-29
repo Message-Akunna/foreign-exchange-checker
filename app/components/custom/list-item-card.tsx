@@ -30,7 +30,7 @@ export function ListItemCard({
           : undefined
       }
       className={cn(
-        "flex items-center justify-between px-4 py-3 bg-accent border hover:bg-secondary transition-all rounded-lg gap-5 focus:outline-none focus:ring-2 focus:ring-primary/20",
+        "flex items-center justify-between p-3 lg:px-4 lg:py-4 bg-accent border hover:border-alt transition-all rounded-lg gap-2.5 lg:gap-5 focus:outline-none focus:ring-2 focus:ring-primary",
         isClickable && "cursor-pointer",
         className
       )}

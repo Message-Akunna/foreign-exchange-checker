@@ -42,7 +42,7 @@ export function LogCard({
   return (
     <ListItemCard onSelect={onSelect} className="py-4">
       {/* Left Side: Time elapsed & Currency pair arrow */}
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-2.5 lg:gap-5">
         <span className="text-xs text-muted-foreground w-16  leading-tight">
           {relativeTime}
         </span>
@@ -54,7 +54,7 @@ export function LogCard({
       </div>
 
       {/* Right Side: Source amount, Converted value, Trash delete button */}
-      <div className="flex items-center gap-5 ">
+      <div className="flex items-center gap-2.5 lg:gap-5">
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground leading-tight">
             {formattedSource}

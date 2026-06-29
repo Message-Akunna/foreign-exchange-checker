@@ -15,6 +15,18 @@ A responsive, and high-performance Foreign Exchange (FX) Checker application bui
 
 ---
 
+## 📸 Screenshots
+
+| Historical Exchange Rate Charts | Pinned Favorite Currency Pairs |
+| :---: | :---: |
+| ![Historical Chart](app/assets/images/screenshots/history-page.png) <br> *Dynamic historical charting panel with custom timeframes* | ![Pinned Favorites](app/assets/images/screenshots/favorite-page.png) <br> *Live-updated favorites dashboard and star toggles* |
+
+| Conversion Logs History | Responsive Mobile Layout |
+| :---: | :---: |
+| ![Conversion Logs](app/assets/images/screenshots/log-page.png) <br> *Stored history log with deletion and restore options* | ![Mobile View](app/assets/images/screenshots/mobile-view.png) <br> *Adaptive mobile layouts with custom scroll behaviors* |
+
+---
+
 ## 🛠️ Architecture & Tech Stack
 
 * **Frontend Framework**: [React Router v7](https://reactrouter.com/) (running in Server-Side Rendering mode).

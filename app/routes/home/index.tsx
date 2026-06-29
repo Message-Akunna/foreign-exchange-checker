@@ -145,27 +145,30 @@ export default function HomeLayout() {
             <Tabs
               value={currentTab}
               onValueChange={handleTabChange}
-              className="sticky top-10.5 z-20 bg-background border-b mb-5 w-full"
+              className="sticky top-10.5 z-20 mb-5 w-full border-b bg-background"
             >
-              <TabsList
-                variant="line"
-                className="justify-start gap-2 px-0 bg-transparent rounded-none border-0 h-10.5!"
-              >
-                {tabItems.map((tab) => (
-                  <TabsTrigger
-                    key={tab.value}
-                    value={tab.value}
-                    className="uppercase h-auto py-2 px-4 gap-2 after:bg-primary group-data-horizontal/tabs:after:-bottom-0.25 group-data-horizontal/tabs:after:h-0.25"
-                  >
-                    {tab.label}
-                    {tab.count !== undefined && tab.count > 0 && (
-                      <span className="flex items-center justify-center size-5 rounded-full text-[10px] bg-primary/10 text-primary">
-                        {tab.count}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+              <div className="overflow-x-auto scrollbar-none">
+                <TabsList
+                  variant="line"
+                  className="inline-flex min-w-max justify-start gap-2 rounded-none border-0 bg-transparent px-0 h-10.5!"
+                >
+                  {tabItems.map((tab) => (
+                    <TabsTrigger
+                      key={tab.value}
+                      value={tab.value}
+                      className="shrink-0 uppercase py-2 px-4 gap-2 h-auto after:bg-primary group-data-horizontal/tabs:after:-bottom-0.25 group-data-horizontal/tabs:after:h-0.25"
+                    >
+                      {tab.label}
+
+                      {tab.count !== undefined && tab.count > 0 && (
+                        <span className="flex size-5 items-center justify-center rounded-full bg-primary/10 text-[10px] text-primary">
+                          {tab.count}
+                        </span>
+                      )}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </div>
             </Tabs>
 
             {/* Sub-route Content */}
