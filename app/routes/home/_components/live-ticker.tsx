@@ -104,7 +104,7 @@ export function LiveTicker() {
               return (
                 <Skeleton
                   key={`ticker-skeleton-${index}`}
-                  className={cn("h-4 shrink-0", widths[index % widths.length])}
+                  className={cn("h-6 rounded-none shrink-0", widths[index % widths.length])}
                 />
               );
             })}
@@ -116,6 +116,7 @@ export function LiveTicker() {
           </div>
         ) : (
           <SafeMarquee
+            speed={40}
             pauseOnHover={true}
             className="flex animate-infinite-scroll whitespace-nowrap items-center"
           >

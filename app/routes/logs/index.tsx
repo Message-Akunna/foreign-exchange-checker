@@ -13,6 +13,7 @@ import {
 } from "@/services/queries/logs";
 import { EmptyState } from "@/components/custom/empty-state";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/custom/icon-button";
 import { FxCard } from "../_components/fx-card";
 import { ClipboardList } from "lucide-react";
 import { toast } from "sonner";
@@ -115,14 +116,16 @@ export default function LogsPage() {
           <div className="text-xs uppercase text-muted-foreground">
             {logs.length} LOGGED
           </div>
-          <Button
+          <IconButton
             size="sm"
             variant="outline"
             onClick={handleClearLogs}
             className="uppercase text-muted-foreground"
+            loading={clearLogsMutation.isPending}
+            disabled={clearLogsMutation.isPending}
           >
             Clear All
-          </Button>
+          </IconButton>
         </>
       }
     >

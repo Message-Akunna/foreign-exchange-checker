@@ -153,7 +153,7 @@ export default function ComparePage() {
             return (
               <ListItemCard key={target.code}>
                 {/* Left Side: Flag & Currency Details */}
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-2.5 lg:gap-5">
                   <FlagImage
                     code={target.code}
                     className="size-6 rounded-full border border-border/30"
@@ -169,7 +169,7 @@ export default function ComparePage() {
                 </div>
 
                 {/* Right Side: Converted Amount, Rate & Star Toggle */}
-                <div className="flex items-center gap-5">
+                <div className="flex items-center gap-2.5 lg:gap-5">
                   <div className="flex flex-col items-end gap-1.5">
                     <span className="text-base leading-4.5 text-foreground">
                       {formattedValue}
