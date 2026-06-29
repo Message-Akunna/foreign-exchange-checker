@@ -57,13 +57,25 @@ export default function LogsPage() {
   }
 
   const handleClearLogs = () => {
-    clearLogsMutation.mutate();
-    toast.success("Conversion logs cleared");
+    clearLogsMutation.mutate(undefined, {
+      onSuccess: () => {
+        toast.success("Conversion logs cleared");
+      },
+      onError: (error: any) => {
+        toast.error(error.message || "Failed to clear conversion logs");
+      },
+    });
   };
 
   const handleDeleteLog = (id: string) => {
-    deleteLogMutation.mutate(id);
-    toast.success("Log entry deleted");
+    deleteLogMutation.mutate(id, {
+      onSuccess: () => {
+        toast.success("Log entry deleted");
+      },
+      onError: (error: any) => {
+        toast.error(error.message || "Failed to delete log entry");
+      },
+    });
   };
 
   const handleRestoreLog = (log: (typeof logs)[0]) => {
@@ -120,6 +132,8 @@ export default function LogsPage() {
           log={log}
           onSelect={() => handleRestoreLog(log)}
           onDelete={() => handleDeleteLog(log.id)}
+          loading={deleteLogMutation.isPending && deleteLogMutation.variables === log.id}
+          disabled={deleteLogMutation.isPending}
         />
       ))}
     </FxCard>

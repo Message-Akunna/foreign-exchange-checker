@@ -1,14 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-
-export interface ConversionLog {
-  id: string;
-  timestamp: string;
-  amount: number;
-  sendCurrency: string;
-  receiveCurrency: string;
-  rate: number;
-  result: number;
-}
+import type { ConversionLog } from "@/services/queries/logs";
 
 export interface FxState {
   amount: string;

@@ -9,6 +9,7 @@ import {
 } from "@/services/queries/favorites";
 import { EmptyState } from "@/components/custom/empty-state";
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/custom/icon-button";
 import { FxCard } from "../_components/fx-card";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
@@ -65,8 +66,14 @@ export default function FavoritesPage() {
   };
 
   const handleRemoveFavorite = (pair: string) => {
-    toggleFavoriteMutation.mutate(pair);
-    toast.success(`Removed ${pair} from favorites`);
+    toggleFavoriteMutation.mutate(pair, {
+      onSuccess: () => {
+        toast.success(`Removed ${pair} from favorites`);
+      },
+      onError: (error: any) => {
+        toast.error(error.message || `Failed to remove ${pair} from favorites`);
+      },
+    });
   };
 
   if (favorites.length === 0) {
@@ -100,12 +107,14 @@ export default function FavoritesPage() {
         </div>
       }
     >
-      {favorites.map((pair) => (
+      {favorites.map((fav) => (
         <FavoriteCard
-          key={pair}
-          pair={pair}
-          onSelect={() => handleSelectFavorite(pair)}
-          onRemove={() => handleRemoveFavorite(pair)}
+          key={fav.id}
+          pair={fav.pair}
+          onSelect={() => handleSelectFavorite(fav.pair)}
+          onRemove={() => handleRemoveFavorite(fav.pair)}
+          loading={toggleFavoriteMutation.isPending && toggleFavoriteMutation.variables === fav.pair}
+          disabled={toggleFavoriteMutation.isPending}
         />
       ))}
     </FxCard>
@@ -116,9 +125,17 @@ interface FavoriteCardProps {
   pair: string;
   onSelect: () => void;
   onRemove: () => void;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
-function FavoriteCard({ pair, onSelect, onRemove }: FavoriteCardProps) {
+function FavoriteCard({
+  pair,
+  onSelect,
+  onRemove,
+  loading,
+  disabled,
+}: FavoriteCardProps) {
   const [base, target] = pair.split("/");
   const { data: rates, isLoading } = useExchangeRates(base || "USD");
 
@@ -170,7 +187,7 @@ function FavoriteCard({ pair, onSelect, onRemove }: FavoriteCardProps) {
         </div>
 
         {/* Favorite Star Toggle Button (always active since it is on the favorites page) */}
-        <Button
+        <IconButton
           type="button"
           variant="outline-primary"
           size="icon-sm"
@@ -179,9 +196,10 @@ function FavoriteCard({ pair, onSelect, onRemove }: FavoriteCardProps) {
             onRemove();
           }}
           className="cursor-pointer"
-        >
-          <Star className="size-4 fill-primary text-primary" />
-        </Button>
+          loading={loading}
+          disabled={disabled}
+          icon={<Star className="size-4 fill-primary text-primary" />}
+        />
       </div>
     </ListItemCard>
   );

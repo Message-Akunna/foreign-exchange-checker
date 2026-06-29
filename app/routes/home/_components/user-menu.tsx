@@ -3,8 +3,9 @@
 import { useNavigate, useLocation } from "react-router";
 import { Heart, History, LogOut } from "lucide-react";
 
-import { useAppSelector } from "@/services/redux";
 import { useAuth } from "@/providers/auth-provider";
+import { useFavorites } from "@/services/queries/favorites";
+import { useLogs } from "@/services/queries/logs";
 import { initialsFromString } from "@/helpers/initials-from-string";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,8 +23,11 @@ export function UserMenu() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const favoriteCount = useAppSelector((state) => state.fx.favorites.length);
-  const logCount = useAppSelector((state) => state.fx.logs.length);
+  const { data: favorites = [] } = useFavorites();
+  const { data: logs = [] } = useLogs();
+
+  const favoriteCount = favorites.length;
+  const logCount = logs.length;
 
   if (!isAuthenticated || !user) {
     return (

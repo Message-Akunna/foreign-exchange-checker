@@ -55,13 +55,19 @@ export default function ComparePage() {
 
   const handleToggleFavorite = (pair: string) => {
     executeProtectedAction(() => {
-      const isFavorited = favorites.includes(pair);
-      toggleFavoriteMutation.mutate(pair);
-      toast.success(
-        isFavorited
-          ? `Removed ${pair} from favorites`
-          : `Added ${pair} to favorites`
-      );
+      const isFavorited = favorites.some((fav) => fav.pair === pair);
+      toggleFavoriteMutation.mutate(pair, {
+        onSuccess: () => {
+          toast.success(
+            isFavorited
+              ? `Removed ${pair} from favorites`
+              : `Added ${pair} to favorites`
+          );
+        },
+        onError: (error: any) => {
+          toast.error(error.message || `Failed to update favorite status`);
+        },
+      });
     });
   };
 
@@ -142,7 +148,7 @@ export default function ComparePage() {
             });
 
             const pair = `${sendCurrency}/${target.code}`;
-            const isFavorited = favorites.includes(pair);
+            const isFavorited = favorites.some((fav) => fav.pair === pair);
 
             return (
               <ListItemCard key={target.code}>
