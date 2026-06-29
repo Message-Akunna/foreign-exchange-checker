@@ -15,4 +15,5 @@ export default [
     route("login", "routes/auth/login/index.tsx"),
     route("register", "routes/auth/register/index.tsx"),
   ]),
+  route("*", "routes/catchall.tsx"),
 ] satisfies RouteConfig;
