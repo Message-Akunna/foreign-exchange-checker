@@ -21,6 +21,7 @@ import {
 } from "@/services/redux/fx-slice";
 // components
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/custom/icon-button";
 import { CurrencySelect } from "./currency-select";
 import { FormAmount } from "@/components/forms/form-amount";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -71,7 +72,7 @@ export function ConverterForm() {
   const { data: rates, isLoading } = useExchangeRates(sendCurrency);
 
   const currentPair = `${sendCurrency}/${receiveCurrency}`;
-  const isFavorited = favorites.includes(currentPair);
+  const isFavorited = favorites.some((fav) => fav.pair === currentPair);
 
   // Compute conversion rate
   const rateInfo = rates?.[receiveCurrency];
@@ -199,12 +200,18 @@ export function ConverterForm() {
 
   const handleToggleFavorite = () => {
     executeProtectedAction(() => {
-      toggleFavoriteMutation.mutate(currentPair);
-      if (isFavorited) {
-        toast.success(`Removed ${currentPair} from favorites`);
-      } else {
-        toast.success(`Added ${currentPair} to favorites`);
-      }
+      toggleFavoriteMutation.mutate(currentPair, {
+        onSuccess: () => {
+          if (isFavorited) {
+            toast.success(`Removed ${currentPair} from favorites`);
+          } else {
+            toast.success(`Added ${currentPair} to favorites`);
+          }
+        },
+        onError: (error: any) => {
+          toast.error(error.message || "Failed to update favorite status");
+        },
+      });
     });
   };
 
@@ -216,20 +223,28 @@ export function ConverterForm() {
       const receiveVal = Number(data.receiveAmount);
       if (Number.isNaN(sendVal) || sendVal <= 0) return;
 
-      addLogMutation.mutate({
-        amount: sendVal,
-        sendCurrency,
-        receiveCurrency,
-        rate: conversionRate,
-        result: sendVal * conversionRate,
-      });
-
-      const formattedReceive = receiveVal.toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-      toast.success(
-        `Logged conversion: ${sendVal} ${sendCurrency} to ${formattedReceive} ${receiveCurrency}`
+      addLogMutation.mutate(
+        {
+          amount: sendVal,
+          sendCurrency,
+          receiveCurrency,
+          rate: conversionRate,
+          result: sendVal * conversionRate,
+        },
+        {
+          onSuccess: () => {
+            const formattedReceive = receiveVal.toLocaleString("en-US", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+            toast.success(
+              `Logged conversion: ${sendVal} ${sendCurrency} to ${formattedReceive} ${receiveCurrency}`
+            );
+          },
+          onError: (error: any) => {
+            toast.error(error.message || "Failed to log conversion");
+          },
+        }
       );
     });
   };
@@ -318,27 +333,31 @@ export function ConverterForm() {
           </div>
           <div className="flex items-center gap-2">
             {/* Favorite button */}
-            <Button
+            <IconButton
               size="sm"
               type="button"
               className="uppercase"
               onClick={handleToggleFavorite}
               variant={isFavorited ? "primary" : "outline-primary"}
+              loading={toggleFavoriteMutation.isPending}
+              disabled={toggleFavoriteMutation.isPending}
+              icon={<Star className={cn("size-3.5", isFavorited && "fill-current")} />}
             >
-              <Star className={cn("size-3.5", isFavorited && "fill-current")} />
               {isFavorited ? "Favorited" : "Favorite"}
-            </Button>
+            </IconButton>
 
             {/* Log Conversion button */}
-            <Button
+            <IconButton
               size="sm"
               type="submit"
               form="converter-form"
               className="uppercase"
               variant="outline-primary"
+              loading={addLogMutation.isPending}
+              disabled={addLogMutation.isPending}
             >
               Log Conversion
-            </Button>
+            </IconButton>
 
             {/* Share Conversion button */}
             <ShareButton className="uppercase" />

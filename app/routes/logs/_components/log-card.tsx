@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/custom/icon-button";
 import { Trash2 } from "lucide-react";
 import { getRelativeTime } from "@/helpers/relative-time";
 import { ListItemCard } from "@/components/custom/list-item-card";
@@ -15,9 +15,17 @@ interface LogCardProps {
   };
   onSelect: () => void;
   onDelete: () => void;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
-export function LogCard({ log, onSelect, onDelete }: LogCardProps) {
+export function LogCard({
+  log,
+  onSelect,
+  onDelete,
+  loading,
+  disabled,
+}: LogCardProps) {
   const relativeTime = getRelativeTime(log.timestamp);
 
   const formattedSource = log.amount.toLocaleString("en-US", {
@@ -57,7 +65,7 @@ export function LogCard({ log, onSelect, onDelete }: LogCardProps) {
         </div>
 
         {/* Delete button */}
-        <Button
+        <IconButton
           type="button"
           variant="outline"
           size="icon-sm"
@@ -66,9 +74,10 @@ export function LogCard({ log, onSelect, onDelete }: LogCardProps) {
             onDelete();
           }}
           className="hover:text-destructive hover:bg-destructive/10"
-        >
-          <Trash2 className="size-4" />
-        </Button>
+          loading={loading}
+          disabled={disabled}
+          icon={<Trash2 className="size-4" />}
+        />
       </div>
     </ListItemCard>
   );

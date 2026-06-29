@@ -1,74 +1,75 @@
-import { useAppDispatch, useAppSelector } from "@/services/redux";
-import { addLog, clearLogs, deleteLog } from "@/services/redux/fx-slice";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/providers/auth-provider";
+import { getLogs, addLog, deleteLog, clearLogs } from "./apis";
+import type { ConversionLog, AddLogInput } from "./types";
 
 /**
  * Hook to retrieve the list of conversion logs.
- * Bridges Redux state to React Query for upcoming database migration.
+ * Fetches user-specific logs from Appwrite.
  */
 export function useLogs() {
-  const logs = useAppSelector((state) => state.fx.logs);
-  return useQuery({
-    queryKey: ["logs"],
-    queryFn: () => logs,
-    initialData: logs,
+  const { user } = useAuth();
+  const userId = user?.$id;
+
+  return useQuery<ConversionLog[]>({
+    queryKey: ["logs", userId],
+    queryFn: () => getLogs(userId || ""),
+    enabled: !!userId,
   });
 }
 
 /**
- * Mutation hook to add a conversion log entry.
+ * Mutation hook to add a conversion log entry in Appwrite.
  */
 export function useAddLogMutation() {
-  const dispatch = useAppDispatch();
+  const { user } = useAuth();
+  const userId = user?.$id;
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (log: {
-      amount: number;
-      sendCurrency: string;
-      receiveCurrency: string;
-      rate: number;
-      result: number;
-    }) => {
-      dispatch(addLog(log));
-      return log;
+    mutationFn: async (log: AddLogInput) => {
+      if (!userId) throw new Error("User must be authenticated to log a conversion");
+      return await addLog(userId, log);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["logs"] });
+      queryClient.invalidateQueries({ queryKey: ["logs", userId] });
     },
   });
 }
 
 /**
- * Mutation hook to clear all conversion log entries.
+ * Mutation hook to clear all conversion log entries in Appwrite.
  */
 export function useClearLogsMutation() {
-  const dispatch = useAppDispatch();
+  const { user } = useAuth();
+  const userId = user?.$id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
-      dispatch(clearLogs());
+      if (!userId) throw new Error("User must be authenticated to clear logs");
+      await clearLogs(userId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["logs"] });
+      queryClient.invalidateQueries({ queryKey: ["logs", userId] });
     },
   });
 }
 
 /**
- * Mutation hook to delete a specific conversion log entry by ID.
+ * Mutation hook to delete a specific conversion log entry by ID in Appwrite.
  */
 export function useDeleteLogMutation() {
-  const dispatch = useAppDispatch();
+  const { user } = useAuth();
+  const userId = user?.$id;
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      dispatch(deleteLog(id));
+      await deleteLog(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["logs"] });
+      queryClient.invalidateQueries({ queryKey: ["logs", userId] });
     },
   });
 }

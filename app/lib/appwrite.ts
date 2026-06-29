@@ -1,4 +1,4 @@
-import { Client, Account, ID } from "appwrite";
+import { Client, Account, TablesDB, ID, Query } from "appwrite";
 
 const client = new Client();
 
@@ -9,7 +9,12 @@ if (typeof window !== "undefined") {
 }
 
 export const account = new Account(client);
+export const db = new TablesDB(client);
 
-export { ID };
+export const APPWRITE_DB_ID = "6a4265e4001112d6fa4a";
+export const APPWRITE_LOGS_COLLECTION_ID = "logs";
+export const APPWRITE_FAVORITES_COLLECTION_ID = "favorites";
+
+export { ID, Query };
 
 export default client;

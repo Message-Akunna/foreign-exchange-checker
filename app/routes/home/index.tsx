@@ -1,8 +1,9 @@
 import * as React from "react";
 // router
 import { Outlet, useNavigate, useLocation } from "react-router";
-// redux
-import { useAppSelector } from "@/services/redux";
+// queries
+import { useFavorites } from "@/services/queries/favorites";
+import { useLogs } from "@/services/queries/logs";
 // components
 import { LiveTicker } from "./_components/live-ticker";
 import { ConverterForm } from "./_components/converter-form";
@@ -28,8 +29,11 @@ export default function HomeLayout() {
   const { data: currencies } = useCurrencies();
   const currencyCount = currencies ? Object.keys(currencies).length : 0;
 
-  const favoriteCount = useAppSelector((state) => state.fx.favorites.length);
-  const logCount = useAppSelector((state) => state.fx.logs.length);
+  const { data: favorites = [] } = useFavorites();
+  const { data: logs = [] } = useLogs();
+
+  const favoriteCount = favorites.length;
+  const logCount = logs.length;
 
   const tabItems = [
     {
