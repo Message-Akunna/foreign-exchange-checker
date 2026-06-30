@@ -55,7 +55,7 @@ export function useSearchParamGroup<T extends Record<string, ParamValue>>(
           }
           return next;
         },
-        { replace: true, state: location.state }
+        { replace: true, state: location.state, preventScrollReset: true }
       );
     },
     [setSearchParams, values, location.state]

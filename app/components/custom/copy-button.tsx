@@ -9,6 +9,8 @@ export interface CopyButtonProps extends React.ComponentProps<typeof Button> {
   value: string;
   text?: string;
   successMessage?: string;
+  icon?: React.ReactNode;
+  copiedIcon?: React.ReactNode;
 }
 
 const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
@@ -20,6 +22,8 @@ const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
       variant = "link",
       size,
       className,
+      icon,
+      copiedIcon,
       children,
       ...props
     },
@@ -53,9 +57,9 @@ const CopyButton = React.forwardRef<HTMLButtonElement, CopyButtonProps>(
         {...props}
       >
         {copied ? (
-          <CheckIcon className="size-4 text-green-500" />
+          copiedIcon || <CheckIcon className="size-4 text-success" />
         ) : (
-          <CopyIcon className="size-4" />
+          icon || <CopyIcon className="size-4" />
         )}
         {text && <span>{text}</span>}
         {children}
