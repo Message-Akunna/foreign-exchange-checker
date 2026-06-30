@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // icons
 import { Star } from "lucide-react";
-import { ShareButton } from "./share-button";
+import { CopyLinkButton } from "./copy-link-button";
 import { ArrowDownUpIcon } from "@animateicons/react/lucide";
 // hooks
 import { useSearchParamGroup } from "@/hooks/use-search-param-group";
@@ -82,7 +82,6 @@ export function ConverterForm() {
     amount: string | null;
     send: string | null;
     receive: string | null;
-    rate: string | null;
   }>();
   const hasHydrated = React.useRef(false);
 
@@ -120,9 +119,8 @@ export function ConverterForm() {
       amount: reduxAmount || null,
       send: sendCurrency || null,
       receive: receiveCurrency || null,
-      rate: conversionRate ? conversionRate.toFixed(4) : null,
     });
-  }, [reduxAmount, sendCurrency, receiveCurrency, conversionRate, setParams]);
+  }, [reduxAmount, sendCurrency, receiveCurrency, setParams]);
 
   const { control, watch, setValue, handleSubmit } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -360,7 +358,7 @@ export function ConverterForm() {
             </IconButton>
 
             {/* Share Conversion button */}
-            <ShareButton className="uppercase" />
+            <CopyLinkButton className="uppercase" />
           </div>
         </div>
       </CardFooter>

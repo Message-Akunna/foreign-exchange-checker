@@ -67,10 +67,11 @@ export default function HomeLayout() {
 
   const handleTabChange = (value: string) => {
     const search = location.search;
+    const options = { preventScrollReset: true };
     if (value === "history") {
-      navigate(`/history${search}`);
+      navigate(`/history${search}`, options);
     } else {
-      navigate(`/${value}${search}`);
+      navigate(`/${value}${search}`, options);
     }
   };
 
