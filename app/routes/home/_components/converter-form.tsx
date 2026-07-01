@@ -288,7 +288,7 @@ export function ConverterForm() {
               className="shrink-0 transition-transform active:scale-95"
               title="Swap Currencies"
             >
-              <ArrowDownUpIcon className="size-5 text-foreground rotate-90" />
+              <ArrowDownUpIcon className="size-5 text-foreground md:rotate-90" />
             </Button>
           </div>
 
@@ -339,7 +339,11 @@ export function ConverterForm() {
               variant={isFavorited ? "primary" : "outline-primary"}
               loading={toggleFavoriteMutation.isPending}
               disabled={toggleFavoriteMutation.isPending}
-              icon={<Star className={cn("size-3.5", isFavorited && "fill-current")} />}
+              icon={
+                <Star
+                  className={cn("size-3.5", isFavorited && "fill-current")}
+                />
+              }
             >
               {isFavorited ? "Favorited" : "Favorite"}
             </IconButton>
