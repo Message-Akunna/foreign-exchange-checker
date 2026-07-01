@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ID } from "appwrite";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
-import { account } from "@/lib/appwrite";
+import { getAuthUser, login, register, logout } from "./apis";
+import type { LoginInput, RegisterInput } from "./types";
 
 /**
  * Hook to retrieve the current Appwrite session.
@@ -10,14 +10,7 @@ import { account } from "@/lib/appwrite";
 export function useAuthUser() {
   return useQuery({
     queryKey: ["auth-user"],
-    queryFn: async () => {
-      try {
-        return await account.get();
-      } catch {
-        // Appwrite throws 401 when no session exists
-        return null;
-      }
-    },
+    queryFn: getAuthUser,
     staleTime: 5 * 60 * 1000, // keep for 5 minutes
     retry: false,
   });
@@ -30,9 +23,7 @@ export function useLoginMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ email, password }: any) => {
-      return await account.createEmailPasswordSession({ email, password });
-    },
+    mutationFn: (credentials: LoginInput) => login(credentials),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["auth-user"] });
       toast.success("Successfully logged in!");
@@ -50,12 +41,7 @@ export function useRegisterMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ email, password, name }: any) => {
-      // Create user
-      await account.create({ userId: ID.unique(), email, password, name });
-      // Create session (auto login)
-      return await account.createEmailPasswordSession({ email, password });
-    },
+    mutationFn: (data: RegisterInput) => register(data),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["auth-user"] });
       toast.success("Account created successfully!");
@@ -74,9 +60,7 @@ export function useLogoutMutation() {
   const navigate = useNavigate();
 
   return useMutation({
-    mutationFn: async () => {
-      return await account.deleteSession({ sessionId: "current" });
-    },
+    mutationFn: logout,
     onSuccess: async () => {
       queryClient.setQueryData(["auth-user"], null);
       toast.success("Successfully logged out");
