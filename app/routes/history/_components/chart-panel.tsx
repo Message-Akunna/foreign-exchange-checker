@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   AreaChart,
   Area,
@@ -84,6 +85,17 @@ export function ChartPanel({
   timeframe,
   className,
 }: ChartPanelProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
     <Card
       className={cn(
@@ -126,12 +138,12 @@ export function ChartPanel({
                   >
                     <stop
                       offset="5%"
-                      stopColor="oklch(0.9157 0.2054 121.64)"
+                      stopColor="var(--primary)"
                       stopOpacity={0.4}
                     />
                     <stop
                       offset="95%"
-                      stopColor="oklch(0.9157 0.2054 121.64)"
+                      stopColor="var(--primary)"
                       stopOpacity={0}
                     />
                   </linearGradient>
@@ -143,6 +155,7 @@ export function ChartPanel({
                   opacity={0.5}
                 />
                 <XAxis
+                  hide={isMobile}
                   dataKey="date"
                   tickLine={false}
                   axisLine={false}
@@ -153,6 +166,7 @@ export function ChartPanel({
                   minTickGap={25}
                 />
                 <YAxis
+                  hide={isMobile}
                   domain={["auto", "auto"]}
                   tickLine={false}
                   axisLine={false}
@@ -165,10 +179,10 @@ export function ChartPanel({
                 <Tooltip
                   labelFormatter={formatTooltipLabel}
                   contentStyle={{
-                    backgroundColor: "oklch(0.205 0 0)",
-                    borderColor: "oklch(1 0 0 / 10%)",
+                    backgroundColor: "var(--background)",
+                    borderColor: "var(--border)",
                     borderRadius: "8px",
-                    color: "oklch(0.985 0 0)",
+                    color: "var(--primary)",
                     fontFamily: "var(--font-mono)",
                   }}
                   itemStyle={{ color: "oklch(0.9157 0.2054 121.64)" }}
@@ -177,7 +191,7 @@ export function ChartPanel({
                 <Area
                   type="linear"
                   dataKey="value"
-                  stroke="oklch(0.9157 0.2054 121.64)"
+                  stroke="var(--primary)"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#historyGradient)"
