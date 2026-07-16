@@ -8,8 +8,23 @@ const formAmountVariants = cva("", {
   variants: {
     variant: {
       input: "",
-      display:
-        "!border-0 !bg-transparent disabled:bg-transparent !p-0 !text-[40px] !leading-none font-bold tracking-tight transition-all duration-300 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-0 outline-none focus:outline-none focus:ring-0",
+      display: `
+        autofill-display
+        border-2 border-transparent
+        !bg-transparent
+        rounded-md
+        !p-0
+        !text-[40px]
+        !leading-none
+        font-bold
+        tracking-tight
+        shadow-none
+
+        focus:ring-0
+        focus-visible:ring-0
+
+        focus-visible:border-primary
+      `
     },
   },
   defaultVariants: {
