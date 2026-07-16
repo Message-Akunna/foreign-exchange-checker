@@ -152,6 +152,21 @@
     }
 }
 
+@utility autofill-display {
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--foreground);
+    -webkit-box-shadow: 0 0 0 1000px transparent inset;
+
+    font: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+
+    transition: background-color 99999s ease-in-out;
+  }
+}
+
 .flag-image-container svg {
   width: 100% !important;
   height: 100% !important;

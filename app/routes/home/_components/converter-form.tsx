@@ -266,6 +266,10 @@ export function ConverterForm() {
                 className="text-foreground"
                 placeholder="0.00"
                 onChange={handleSendAmountChange}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
               />
               <div className="shrink-0">
                 <CurrencySelect
@@ -306,6 +310,10 @@ export function ConverterForm() {
                 )}
                 placeholder={isLoading ? "..." : "0.00"}
                 onChange={handleReceiveAmountChange}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
               />
               <div className="shrink-0">
                 <CurrencySelect
